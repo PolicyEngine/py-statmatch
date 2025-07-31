@@ -1,4 +1,0 @@
-- bump: patch
-  changes:
-    fixed:
-    - Correct build-changelog syntax in versioning workflow with proper arguments

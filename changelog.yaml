@@ -10,3 +10,8 @@
     - Example usage script
   date: 2024-01-31
   version: 0.1.0
+- bump: patch
+  changes:
+    fixed:
+    - Correct build-changelog syntax in versioning workflow with proper arguments
+  date: 2025-07-31 10:31:57
