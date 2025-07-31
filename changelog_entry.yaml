@@ -1,4 +1,4 @@
 - bump: patch
   changes:
     fixed:
-    - Fixed yaml-changelog command invocation in versioning workflow using python -m
+    - Use correct yaml-changelog command (build-changelog) in versioning workflow
