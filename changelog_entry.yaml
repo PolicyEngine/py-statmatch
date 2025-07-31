@@ -1,0 +1,4 @@
+- bump: patch
+  changes:
+    added:
+    - Manual PyPI publishing workflow for recovering from failed automated publishes
