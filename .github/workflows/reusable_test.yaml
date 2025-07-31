@@ -38,10 +38,11 @@ jobs:
       
       - name: Install package with dev dependencies (Windows)
         if: runner.os == 'Windows'
+        shell: cmd
         run: |
           uv venv
-          .venv\Scripts\activate
-          # Install without rpy2 for CI tests
+          call .venv\Scripts\activate
+          REM Install without rpy2 for CI tests
           uv pip install -e .
           uv pip install pytest pytest-cov black isort flake8 mypy jupyter-book yaml-changelog build setuptools wheel codecov
       
@@ -54,9 +55,10 @@ jobs:
       
       - name: Run tests (Windows)
         if: runner.os == 'Windows'
+        shell: cmd
         run: |
-          .venv\Scripts\activate
-          # Skip R comparison tests in CI
+          call .venv\Scripts\activate
+          REM Skip R comparison tests in CI
           pytest tests/ -v --cov=statmatch --cov-report=xml -k "not against_r"
       
       - name: Upload coverage
