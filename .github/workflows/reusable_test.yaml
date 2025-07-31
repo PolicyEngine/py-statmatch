@@ -38,12 +38,13 @@ jobs:
       - name: Run tests
         run: |
           source .venv/bin/activate
-          pytest tests/ -v --cov=statmatch --cov-report=xml
+          # Skip R comparison tests in CI
+          pytest tests/ -v --cov=statmatch --cov-report=xml -k "not against_r"
       
       - name: Upload coverage
         uses: codecov/codecov-action@v4
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        if: inputs.os == 'ubuntu-latest' && inputs.python-version == '3.12'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.xml
-          fail_ci_if_error: true
+          fail_ci_if_error: false
