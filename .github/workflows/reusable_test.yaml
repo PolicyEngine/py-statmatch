@@ -30,7 +30,10 @@ jobs:
       - name: Install package with dev dependencies
         run: |
           uv venv
-          uv pip install -e ".[dev]"
+          source .venv/bin/activate
+          # Install without rpy2 for CI tests
+          uv pip install -e .
+          uv pip install pytest pytest-cov black isort flake8 mypy jupyter-book yaml-changelog build setuptools wheel codecov
       
       - name: Run tests
         run: |
