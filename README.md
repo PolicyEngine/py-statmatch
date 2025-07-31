@@ -185,6 +185,27 @@ This repository uses GitHub Actions for automated PyPI publishing. To enable pub
 
 The workflows automatically detect which method to use based on available secrets.
 
+### Manual Publishing (Fallback)
+
+If automated publishing fails, you can publish manually:
+
+1. **Build the package locally:**
+   ```bash
+   python -m pip install build twine
+   python -m build
+   ```
+
+2. **Upload to PyPI:**
+   ```bash
+   python scripts/publish_to_pypi.py
+   # Or directly with twine:
+   # python -m twine upload --skip-existing dist/*
+   ```
+
+3. **First-time setup:**
+   - You'll need PyPI credentials (username: `__token__`, password: your-api-token)
+   - Store them in `~/.pypirc` or enter when prompted
+
 ## Acknowledgments
 
 This is a Python port of the R StatMatch package by Marcello D'Orazio. We are grateful for the original implementation which has been invaluable to the statistical matching community.
