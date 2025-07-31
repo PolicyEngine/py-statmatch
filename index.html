@@ -420,7 +420,14 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">Citation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pypi-publishing-setup">PyPI Publishing Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#option-1-pypi-api-token-recommended-for-now">Option 1: PyPI API Token (Recommended for now)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-trusted-publisher-oidc-future-enhancement">Option 2: Trusted Publisher (OIDC) - Future Enhancement</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgments">Acknowledgments</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-statistical-matching">What is Statistical Matching?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
@@ -442,8 +449,15 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">License</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Citation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Contributing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Acknowledgments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Contributing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">PyPI Publishing Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">Option 1: PyPI API Token (Recommended for now)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Option 2: Trusted Publisher (OIDC) - Future Enhancement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">Acknowledgments</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-example">Quick Example</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next Steps</a></li>
 </ul>
@@ -629,6 +643,51 @@ pytest<span class="w"> </span>tests/test_nnd_hotdeck.py::TestNNDHotdeck::test_eu
 <section id="contributing">
 <h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">#</a></h2>
 <p>Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.</p>
+<section id="pypi-publishing-setup">
+<h3>PyPI Publishing Setup<a class="headerlink" href="#pypi-publishing-setup" title="Link to this heading">#</a></h3>
+<p>This repository uses GitHub Actions for automated PyPI publishing. To enable publishing:</p>
+<section id="option-1-pypi-api-token-recommended-for-now">
+<h4>Option 1: PyPI API Token (Recommended for now)<a class="headerlink" href="#option-1-pypi-api-token-recommended-for-now" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p>Create an account on <a class="reference external" href="https://pypi.org/">PyPI</a> if you don’t have one</p></li>
+<li><p>Generate an API token:</p>
+<ul class="simple">
+<li><p>Go to your PyPI account settings</p></li>
+<li><p>Scroll to “API tokens” section</p></li>
+<li><p>Click “Add API token”</p></li>
+<li><p>Give it a meaningful name (e.g., “py-statmatch GitHub Actions”)</p></li>
+<li><p>Select scope: “Entire account” (for first publish) or “Project: py-statmatch” (after first publish)</p></li>
+</ul>
+</li>
+<li><p>Add the token as a GitHub repository secret:</p>
+<ul class="simple">
+<li><p>Go to Settings → Secrets and variables → Actions</p></li>
+<li><p>Click “New repository secret”</p></li>
+<li><p>Name: <code class="docutils literal notranslate"><span class="pre">PYPI_API_TOKEN</span></code></p></li>
+<li><p>Value: Your PyPI API token (starts with <code class="docutils literal notranslate"><span class="pre">pypi-</span></code>)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="option-2-trusted-publisher-oidc-future-enhancement">
+<h4>Option 2: Trusted Publisher (OIDC) - Future Enhancement<a class="headerlink" href="#option-2-trusted-publisher-oidc-future-enhancement" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p>First manually publish the package once using Option 1</p></li>
+<li><p>Go to your PyPI project page</p></li>
+<li><p>Navigate to “Publishing” settings</p></li>
+<li><p>Add GitHub as a trusted publisher:</p>
+<ul class="simple">
+<li><p>Owner: <code class="docutils literal notranslate"><span class="pre">PolicyEngine</span></code></p></li>
+<li><p>Repository: <code class="docutils literal notranslate"><span class="pre">py-statmatch</span></code></p></li>
+<li><p>Workflow: <code class="docutils literal notranslate"><span class="pre">versioning.yaml</span></code></p></li>
+<li><p>Environment: (leave blank)</p></li>
+</ul>
+</li>
+<li><p>Remove the PYPI_API_TOKEN secret (optional)</p></li>
+</ol>
+<p>The workflows automatically detect which method to use based on available secrets.</p>
+</section>
+</section>
 </section>
 <section id="acknowledgments">
 <h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Link to this heading">#</a></h2>
@@ -815,9 +874,54 @@ pytest<span class="w"> </span>tests/test_nnd_hotdeck.py::TestNNDHotdeck::test_eu
 <section id="id14">
 <h2>Contributing<a class="headerlink" href="#id14" title="Link to this heading">#</a></h2>
 <p>Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.</p>
-</section>
 <section id="id15">
-<h2>Acknowledgments<a class="headerlink" href="#id15" title="Link to this heading">#</a></h2>
+<h3>PyPI Publishing Setup<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<p>This repository uses GitHub Actions for automated PyPI publishing. To enable publishing:</p>
+<section id="id16">
+<h4>Option 1: PyPI API Token (Recommended for now)<a class="headerlink" href="#id16" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p>Create an account on <a class="reference external" href="https://pypi.org/">PyPI</a> if you don’t have one</p></li>
+<li><p>Generate an API token:</p>
+<ul class="simple">
+<li><p>Go to your PyPI account settings</p></li>
+<li><p>Scroll to “API tokens” section</p></li>
+<li><p>Click “Add API token”</p></li>
+<li><p>Give it a meaningful name (e.g., “py-statmatch GitHub Actions”)</p></li>
+<li><p>Select scope: “Entire account” (for first publish) or “Project: py-statmatch” (after first publish)</p></li>
+</ul>
+</li>
+<li><p>Add the token as a GitHub repository secret:</p>
+<ul class="simple">
+<li><p>Go to Settings → Secrets and variables → Actions</p></li>
+<li><p>Click “New repository secret”</p></li>
+<li><p>Name: <code class="docutils literal notranslate"><span class="pre">PYPI_API_TOKEN</span></code></p></li>
+<li><p>Value: Your PyPI API token (starts with <code class="docutils literal notranslate"><span class="pre">pypi-</span></code>)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="id17">
+<h4>Option 2: Trusted Publisher (OIDC) - Future Enhancement<a class="headerlink" href="#id17" title="Link to this heading">#</a></h4>
+<ol class="arabic simple">
+<li><p>First manually publish the package once using Option 1</p></li>
+<li><p>Go to your PyPI project page</p></li>
+<li><p>Navigate to “Publishing” settings</p></li>
+<li><p>Add GitHub as a trusted publisher:</p>
+<ul class="simple">
+<li><p>Owner: <code class="docutils literal notranslate"><span class="pre">PolicyEngine</span></code></p></li>
+<li><p>Repository: <code class="docutils literal notranslate"><span class="pre">py-statmatch</span></code></p></li>
+<li><p>Workflow: <code class="docutils literal notranslate"><span class="pre">versioning.yaml</span></code></p></li>
+<li><p>Environment: (leave blank)</p></li>
+</ul>
+</li>
+<li><p>Remove the PYPI_API_TOKEN secret (optional)</p></li>
+</ol>
+<p>The workflows automatically detect which method to use based on available secrets.</p>
+</section>
+</section>
+</section>
+<section id="id18">
+<h2>Acknowledgments<a class="headerlink" href="#id18" title="Link to this heading">#</a></h2>
 <p>This is a Python port of the R StatMatch package by Marcello D’Orazio. We are grateful for the original implementation which has been invaluable to the statistical matching community.</p>
 </section>
 <section id="quick-example">
@@ -937,7 +1041,14 @@ pytest<span class="w"> </span>tests/test_nnd_hotdeck.py::TestNNDHotdeck::test_eu
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citation">Citation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pypi-publishing-setup">PyPI Publishing Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#option-1-pypi-api-token-recommended-for-now">Option 1: PyPI API Token (Recommended for now)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#option-2-trusted-publisher-oidc-future-enhancement">Option 2: Trusted Publisher (OIDC) - Future Enhancement</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgments">Acknowledgments</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-statistical-matching">What is Statistical Matching?</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-features">Key Features</a></li>
@@ -959,8 +1070,15 @@ pytest<span class="w"> </span>tests/test_nnd_hotdeck.py::TestNNDHotdeck::test_eu
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">License</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">Citation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Contributing</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">Acknowledgments</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">Contributing</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">PyPI Publishing Setup</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">Option 1: PyPI API Token (Recommended for now)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">Option 2: Trusted Publisher (OIDC) - Future Enhancement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">Acknowledgments</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-example">Quick Example</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#next-steps">Next Steps</a></li>
 </ul>
