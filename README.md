@@ -154,6 +154,37 @@ If you use this package in your research, please cite both this package and the 
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
+### PyPI Publishing Setup
+
+This repository uses GitHub Actions for automated PyPI publishing. To enable publishing:
+
+#### Option 1: PyPI API Token (Recommended for now)
+1. Create an account on [PyPI](https://pypi.org/) if you don't have one
+2. Generate an API token:
+   - Go to your PyPI account settings
+   - Scroll to "API tokens" section
+   - Click "Add API token"
+   - Give it a meaningful name (e.g., "py-statmatch GitHub Actions")
+   - Select scope: "Entire account" (for first publish) or "Project: py-statmatch" (after first publish)
+3. Add the token as a GitHub repository secret:
+   - Go to Settings → Secrets and variables → Actions
+   - Click "New repository secret"
+   - Name: `PYPI_API_TOKEN`
+   - Value: Your PyPI API token (starts with `pypi-`)
+
+#### Option 2: Trusted Publisher (OIDC) - Future Enhancement
+1. First manually publish the package once using Option 1
+2. Go to your PyPI project page
+3. Navigate to "Publishing" settings
+4. Add GitHub as a trusted publisher:
+   - Owner: `PolicyEngine`
+   - Repository: `py-statmatch`
+   - Workflow: `versioning.yaml`
+   - Environment: (leave blank)
+5. Remove the PYPI_API_TOKEN secret (optional)
+
+The workflows automatically detect which method to use based on available secrets.
+
 ## Acknowledgments
 
 This is a Python port of the R StatMatch package by Marcello D'Orazio. We are grateful for the original implementation which has been invaluable to the statistical matching community.
