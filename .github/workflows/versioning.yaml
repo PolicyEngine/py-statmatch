@@ -29,8 +29,8 @@ jobs:
       
       - name: Install yaml-changelog and build tools
         run: |
-          pip install --upgrade pip
-          pip install yaml-changelog build setuptools wheel
+          python -m pip install --upgrade pip
+          python -m pip install yaml-changelog build setuptools wheel
       
       - name: Check for changelog entry
         id: check_changelog
@@ -46,7 +46,7 @@ jobs:
         id: version
         run: |
           # Update changelog
-          yaml-changelog . --release
+          python -m yaml_changelog --release
           
           # Get new version
           NEW_VERSION=$(python -c "import re; content=open('changelog.yaml').read(); match=re.search(r'version: ([\d.]+)', content); print(match.group(1) if match else '0.1.0')")
