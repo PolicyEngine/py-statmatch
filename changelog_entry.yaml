@@ -2,4 +2,4 @@
   changes:
     fixed:
     - Fixed yaml-changelog command to use python -m syntax
-    - Fixed documentation build by excluding rpy2 dependency
+    - Fixed documentation build by adding [documentation] extra without rpy2 dependency

@@ -50,6 +50,12 @@ dev = [
     "wheel>=0.38.0",
     "codecov>=2.1.0",
 ]
+documentation = [
+    "jupyter-book>=0.15.0",
+    "sphinx>=4.0.0",
+    "sphinx-book-theme>=0.3.0",
+    "myst-nb>=0.17.0",
+]
 
 [project.urls]
 "Homepage" = "https://github.com/PolicyEngine/py-statmatch"
@@ -58,14 +64,14 @@ dev = [
 
 [tool.black]
 line-length = 79
-target-version = ['py38']
+target-version = ['py39', 'py310', 'py311', 'py312', 'py313']
 
 [tool.isort]
 profile = "black"
 line_length = 79
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
