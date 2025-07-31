@@ -104,7 +104,8 @@ jobs:
       - name: Test changelog command
         run: |
           # Test that yaml-changelog works
-          python -m yaml_changelog . --help
+          which yaml-changelog
+          yaml-changelog --help
           
           # Test that version extraction works
           VERSION=$(python -c "import re; content=open('changelog.yaml').read(); match=re.search(r'version: ([\d.]+)', content); print(match.group(1) if match else '0.1.0')")
