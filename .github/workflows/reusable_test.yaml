@@ -27,7 +27,8 @@ jobs:
           version: "0.4.4"
           enable-cache: false
       
-      - name: Install package with dev dependencies
+      - name: Install package with dev dependencies (Unix)
+        if: runner.os != 'Windows'
         run: |
           uv venv
           source .venv/bin/activate
@@ -35,9 +36,26 @@ jobs:
           uv pip install -e .
           uv pip install pytest pytest-cov black isort flake8 mypy jupyter-book yaml-changelog build setuptools wheel codecov
       
-      - name: Run tests
+      - name: Install package with dev dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          uv venv
+          .venv\Scripts\activate
+          # Install without rpy2 for CI tests
+          uv pip install -e .
+          uv pip install pytest pytest-cov black isort flake8 mypy jupyter-book yaml-changelog build setuptools wheel codecov
+      
+      - name: Run tests (Unix)
+        if: runner.os != 'Windows'
         run: |
           source .venv/bin/activate
+          # Skip R comparison tests in CI
+          pytest tests/ -v --cov=statmatch --cov-report=xml -k "not against_r"
+      
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          .venv\Scripts\activate
           # Skip R comparison tests in CI
           pytest tests/ -v --cov=statmatch --cov-report=xml -k "not against_r"
       
