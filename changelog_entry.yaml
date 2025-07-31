@@ -6,4 +6,3 @@
     - Updated all workflows to use Python 3.13
     added:
     - Added documentation build test to PR CI to catch issues before merge
-    - Added versioning tools test to PR CI to prevent push workflow failures
