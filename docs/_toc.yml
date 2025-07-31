@@ -4,8 +4,8 @@
 format: jb-book
 root: index
 chapters:
-- file: getting-started
-- file: api-reference
-- file: examples/index
-  sections:
-  - file: examples/basic-matching
+  - file: getting-started
+  - file: api-reference
+  - file: examples/index
+    sections:
+      - file: examples/basic-matching

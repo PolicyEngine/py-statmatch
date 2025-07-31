@@ -14,10 +14,6 @@ latex:
   latex_documents:
     targetname: book.tex
 
-# Add a bibtex file so that we can create citations
-# bibtex_bibfiles:
-#   - references.bib
-
 # Information about where the book exists on the web
 repository:
   url: https://github.com/PolicyEngine/py-statmatch
@@ -30,6 +26,13 @@ html:
   use_issues_button: true
   use_repository_button: true
   use_edit_page_button: true
+  favicon: logo.png
+  extra_css:
+    - _static/custom.css
+  google_fonts:
+    - family: Roboto
+      style: "normal"
+      weight: 400
   
 parse:
   myst_enable_extensions:
@@ -48,8 +51,19 @@ sphinx:
     - sphinx.ext.napoleon
     - sphinx.ext.viewcode
   config:
-    html_theme: furo
+    html_theme: sphinx_book_theme
     html_theme_options:
-      light_css_variables:
-        color-brand-primary: "#2c4aa8"
-        color-brand-content: "#2c4aa8"
+      use_repository_button: true
+      use_issues_button: true
+      use_edit_page_button: true
+      repository_url: https://github.com/PolicyEngine/py-statmatch
+      repository_branch: main
+      path_to_docs: docs
+      navbar_end: []
+      home_page_in_navbar: true
+      extra_navbar: |
+        <div class="navbar-nav">
+          <p style="margin: 0; padding: 0.5rem;">Built with <a href="https://jupyterbook.org">Jupyter Book</a></p>
+        </div>
+    html_static_path:
+      - _static
