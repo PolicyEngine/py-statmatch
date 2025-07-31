@@ -20,3 +20,8 @@
     fixed:
     - Add id-token permission for PyPI publishing with trusted publishers
   date: 2025-07-31 10:35:01
+- bump: patch
+  changes:
+    added:
+    - Manual PyPI publishing workflow for recovering from failed automated publishes
+  date: 2025-07-31 10:39:44
