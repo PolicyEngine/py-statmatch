@@ -1,0 +1,4 @@
+- bump: patch
+  changes:
+    fixed:
+    - Add id-token permission for PyPI publishing with trusted publishers
