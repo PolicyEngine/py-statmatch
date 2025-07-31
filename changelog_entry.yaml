@@ -1,4 +1,5 @@
 - bump: patch
   changes:
     fixed:
-    - Fixed push CI workflows for documentation build and versioning
+    - Fixed yaml-changelog command to use python -m syntax
+    - Fixed documentation build by excluding rpy2 dependency

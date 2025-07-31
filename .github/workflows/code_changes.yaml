@@ -35,7 +35,9 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -e ".[dev]"
+          # Install without rpy2 for documentation build
+          pip install -e .
+          pip install pytest pytest-cov black isort flake8 mypy jupyter-book yaml-changelog build setuptools wheel codecov
       
       - name: Build documentation
         run: |
