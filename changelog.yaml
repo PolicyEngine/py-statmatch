@@ -15,3 +15,8 @@
     fixed:
     - Correct build-changelog syntax in versioning workflow with proper arguments
   date: 2025-07-31 10:31:57
+- bump: patch
+  changes:
+    fixed:
+    - Add id-token permission for PyPI publishing with trusted publishers
+  date: 2025-07-31 10:35:01
