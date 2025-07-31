@@ -83,8 +83,17 @@ jobs:
         run: python -m build
       
       - name: Publish to PyPI
+        id: publish
         if: steps.check_changelog.outputs.has_changelog == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
           skip-existing: true
+        continue-on-error: true
+      
+      - name: Report PyPI publishing status
+        if: steps.check_changelog.outputs.has_changelog == 'true'
+        run: |
+          if [ "${{ steps.publish.outcome }}" == "failure" ]; then
+            echo "::warning::PyPI publishing failed. Please check if PYPI_API_TOKEN secret is configured or manually publish using the 'Publish to PyPI (Manual)' workflow."
+          fi
