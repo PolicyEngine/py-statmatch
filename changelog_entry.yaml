@@ -1,0 +1,10 @@
+- bump: patch
+  changes:
+    added:
+    - CI/CD infrastructure with GitHub Actions
+    - Automatic changelog management with yaml-changelog
+    - PyPI publishing workflow
+    - Code formatting checks with Black
+    - Multi-platform and multi-Python version testing
+    - Jupyter Book documentation setup
+    - Comprehensive Makefile for development tasks

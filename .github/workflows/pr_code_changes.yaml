@@ -1,0 +1,57 @@
+name: PR - Code Changes
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**.py'
+      - 'pyproject.toml'
+      - '.github/workflows/**'
+      - 'tests/**'
+
+jobs:
+  check_fork:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for external fork
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::error::This workflow does not support pull requests from forks."
+          echo "::error::Please create a branch in the main repository instead."
+          exit 1
+
+  lint:
+    needs: check_fork
+    uses: ./.github/workflows/reusable_lint.yaml
+
+  test:
+    needs: check_fork
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    uses: ./.github/workflows/reusable_test.yaml
+    with:
+      os: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }}
+
+  smoke_test:
+    needs: check_fork
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      - name: Install package
+        run: pip install -e .
+      
+      - name: Test import
+        run: |
+          python -c "from statmatch import nnd_hotdeck; print('Import successful')"
