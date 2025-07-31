@@ -1,4 +1,4 @@
 - bump: patch
   changes:
     fixed:
-    - Use correct yaml-changelog command (build-changelog) in versioning workflow
+    - Correct build-changelog syntax in versioning workflow with proper arguments
