@@ -46,7 +46,7 @@ jobs:
         id: version
         run: |
           # Update changelog
-          build-changelog changelog.yaml --release
+          build-changelog changelog.yaml --output changelog.yaml --append-file changelog_entry.yaml --update-last-date
           
           # Get new version
           NEW_VERSION=$(python -c "import re; content=open('changelog.yaml').read(); match=re.search(r'version: ([\d.]+)', content); print(match.group(1) if match else '0.1.0')")
