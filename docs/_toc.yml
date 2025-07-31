@@ -6,11 +6,6 @@ root: index
 chapters:
 - file: getting-started
 - file: api-reference
-- file: examples
+- file: examples/index
   sections:
   - file: examples/basic-matching
-  - file: examples/constrained-matching
-  - file: examples/donation-classes
-- file: methodology
-- file: contributing
-- file: changelog
