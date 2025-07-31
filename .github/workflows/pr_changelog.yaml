@@ -1,0 +1,9 @@
+name: PR - Changelog
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check_changelog:
+    uses: ./.github/workflows/reusable_changelog_check.yaml

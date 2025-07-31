@@ -1,0 +1,12 @@
+- changes:
+    added:
+    - Initial implementation of NND.hotdeck (Nearest Neighbor Distance Hot Deck) matching
+    - Support for multiple distance metrics (Euclidean, Manhattan, Mahalanobis, etc.)
+    - Donation classes for matching within groups/strata
+    - Constrained matching using Hungarian algorithm
+    - Comprehensive test suite with 7 tests
+    - Full pandas DataFrame compatibility
+    - Type hints throughout the codebase
+    - Example usage script
+  date: 2024-01-31
+  version: 0.1.0

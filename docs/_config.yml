@@ -1,0 +1,69 @@
+# Book settings
+title: py-statmatch Documentation
+author: PolicyEngine
+logo: logo.png
+
+# Force re-execution of notebooks on each build.
+# See https://jupyterbook.org/content/execute.html
+execute:
+  execute_notebooks: auto
+  timeout: 600
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: book.tex
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/PolicyEngine/py-statmatch
+  path_to_book: docs
+  branch: main
+
+# Add GitHub buttons to your book
+# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
+html:
+  use_issues_button: true
+  use_repository_button: true
+  use_edit_page_button: true
+  favicon: logo.png
+  extra_css:
+    - _static/custom.css
+  google_fonts:
+    - family: Roboto
+      style: "normal"
+      weight: 400
+  
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_image
+    - linkify
+    - replacements
+    - smartquotes
+    - substitution
+
+sphinx:
+  extra_extensions:
+    - sphinx.ext.autodoc
+    - sphinx.ext.napoleon
+    - sphinx.ext.viewcode
+  config:
+    html_theme: sphinx_book_theme
+    html_theme_options:
+      use_repository_button: true
+      use_issues_button: true
+      use_edit_page_button: true
+      repository_url: https://github.com/PolicyEngine/py-statmatch
+      repository_branch: main
+      path_to_docs: docs
+      navbar_end: []
+      home_page_in_navbar: true
+      extra_navbar: |
+        <div class="navbar-nav">
+          <p style="margin: 0; padding: 0.5rem;">Built with <a href="https://jupyterbook.org">Jupyter Book</a></p>
+        </div>
+    html_static_path:
+      - _static

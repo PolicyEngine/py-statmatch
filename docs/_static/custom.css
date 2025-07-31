@@ -1,0 +1,176 @@
+/* Import Roboto fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;700&display=swap');
+
+/* Base font settings */
+:root {
+  --pst-font-family-base: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --pst-font-family-heading: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --pst-font-family-monospace: 'Roboto Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  
+  /* PolicyEngine brand colors */
+  --policyengine-blue: #2c4aa8;
+  --policyengine-light-blue: #5a7fd8;
+  --policyengine-dark-blue: #1a2f6b;
+  
+  /* Code background colors */
+  --code-bg-light: #f7f8fa;
+  --code-bg-dark: #2d2d2d;
+  --inline-code-bg: #f3f4f6;
+}
+
+/* Apply Roboto to all text */
+body {
+  font-family: var(--pst-font-family-base);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--pst-font-family-heading);
+  font-weight: 500;
+  color: var(--policyengine-dark-blue);
+}
+
+h1 { font-weight: 700; }
+h2 { font-weight: 500; }
+
+/* Code blocks and inline code */
+code, kbd, pre, samp {
+  font-family: var(--pst-font-family-monospace);
+  font-weight: 400;
+}
+
+/* Inline code styling */
+p code, li code, td code {
+  background-color: var(--inline-code-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: #e83e8c;
+}
+
+/* Code blocks */
+pre {
+  background-color: var(--code-bg-light) !important;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+/* Syntax highlighted code blocks */
+.highlight pre {
+  background-color: var(--code-bg-light) !important;
+  border: none;
+}
+
+/* Override sphinx book theme code background */
+div.highlight {
+  background-color: var(--code-bg-light) !important;
+}
+
+.highlighttable {
+  background-color: var(--code-bg-light) !important;
+}
+
+/* Dark mode code blocks */
+html[data-theme="dark"] pre {
+  background-color: var(--code-bg-dark);
+  border-color: #30363d;
+}
+
+html[data-theme="dark"] .highlight pre {
+  background-color: var(--code-bg-dark);
+}
+
+html[data-theme="dark"] p code,
+html[data-theme="dark"] li code,
+html[data-theme="dark"] td code {
+  background-color: #30363d;
+  color: #f97583;
+}
+
+/* Links with PolicyEngine blue */
+a {
+  color: var(--policyengine-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--policyengine-light-blue);
+  text-decoration: underline;
+}
+
+/* Navigation */
+.bd-sidebar .nav-link {
+  font-family: var(--pst-font-family-base);
+  font-weight: 400;
+}
+
+.bd-sidebar .nav-link.active {
+  font-weight: 500;
+  color: var(--policyengine-blue);
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--pst-font-family-base);
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: var(--policyengine-blue);
+  border-color: var(--policyengine-blue);
+}
+
+.btn-primary:hover {
+  background-color: var(--policyengine-dark-blue);
+  border-color: var(--policyengine-dark-blue);
+}
+
+/* Tables */
+table {
+  font-family: var(--pst-font-family-base);
+}
+
+table code {
+  font-family: var(--pst-font-family-monospace);
+}
+
+/* Admonitions */
+.admonition {
+  font-family: var(--pst-font-family-base);
+}
+
+.admonition-title {
+  font-weight: 500;
+}
+
+/* Copy button for code blocks */
+.copybtn {
+  font-family: var(--pst-font-family-base);
+  font-weight: 400;
+  font-size: 0.8em;
+}
+
+/* Jupyter notebook cells */
+.cell_input pre {
+  background-color: var(--code-bg-light);
+  font-family: var(--pst-font-family-monospace);
+}
+
+.cell_output pre {
+  background-color: #ffffff;
+  font-family: var(--pst-font-family-monospace);
+  border: 1px solid #e1e4e8;
+}
+
+html[data-theme="dark"] .cell_input pre {
+  background-color: var(--code-bg-dark);
+}
+
+html[data-theme="dark"] .cell_output pre {
+  background-color: #0d1117;
+  border-color: #30363d;
+}

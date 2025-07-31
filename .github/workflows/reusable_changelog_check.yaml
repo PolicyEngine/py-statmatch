@@ -1,0 +1,36 @@
+name: Check Changelog
+
+on:
+  workflow_call:
+
+jobs:
+  check_changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      
+      - name: Install yaml-changelog
+        run: pip install yaml-changelog
+      
+      - name: Check for changelog entry
+        run: |
+          echo "Checking for changelog_entry.yaml..."
+          if [ ! -f "changelog_entry.yaml" ]; then
+            echo "::error::No changelog_entry.yaml found. Please add a changelog entry."
+            echo "Example changelog_entry.yaml:"
+            echo "- bump: patch"
+            echo "  changes:"
+            echo "    added:"
+            echo "    - Initial implementation of NND.hotdeck"
+            exit 1
+          fi
+          
+          echo "Validating changelog entry..."
+          python .github/workflows/validate_changelog.py

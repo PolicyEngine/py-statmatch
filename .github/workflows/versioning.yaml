@@ -1,0 +1,89 @@
+name: Versioning
+
+on:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bump_version:
+    if: |
+      !contains(github.event.head_commit.message, '[skip ci]') &&
+      !contains(github.event.head_commit.message, '[ci skip]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.POLICYENGINE_GITHUB || secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      
+      - name: Install yaml-changelog and build tools
+        run: |
+          pip install --upgrade pip
+          pip install yaml-changelog build setuptools wheel
+      
+      - name: Check for changelog entry
+        id: check_changelog
+        run: |
+          if [ -f "changelog_entry.yaml" ]; then
+            echo "has_changelog=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changelog=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Update changelog and version
+        if: steps.check_changelog.outputs.has_changelog == 'true'
+        id: version
+        run: |
+          # Update changelog
+          yaml-changelog . --release
+          
+          # Get new version
+          NEW_VERSION=$(python -c "import re; content=open('changelog.yaml').read(); match=re.search(r'version: ([\d.]+)', content); print(match.group(1) if match else '0.1.0')")
+          
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          
+          # Update version in pyproject.toml
+          sed -i "s/^version = .*/version = \"$NEW_VERSION\"/" pyproject.toml
+          
+          # Update version in __init__.py
+          sed -i "s/__version__ = .*/__version__ = \"$NEW_VERSION\"/" statmatch/__init__.py
+          
+          # Remove changelog entry
+          rm -f changelog_entry.yaml
+      
+      - name: Commit changes
+        if: steps.check_changelog.outputs.has_changelog == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Update version to ${{ steps.version.outputs.new_version }} [skip ci]"
+          git push
+      
+      - name: Create tag
+        if: steps.check_changelog.outputs.has_changelog == 'true'
+        run: |
+          git tag "v${{ steps.version.outputs.new_version }}"
+          git push origin "v${{ steps.version.outputs.new_version }}"
+      
+      - name: Build package
+        if: steps.check_changelog.outputs.has_changelog == 'true'
+        run: python -m build
+      
+      - name: Publish to PyPI
+        if: steps.check_changelog.outputs.has_changelog == 'true'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          skip-existing: true
