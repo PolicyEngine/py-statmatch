@@ -25,3 +25,12 @@
     added:
     - Manual PyPI publishing workflow for recovering from failed automated publishes
   date: 2025-07-31 10:39:44
+- bump: patch
+  changes:
+    added:
+    - Support for both PyPI API token and OIDC trusted publisher authentication
+    - Instructions for PyPI publishing setup in README
+    improved:
+    - Workflows now gracefully handle missing PyPI credentials with helpful warnings
+    - Manual publish workflow tries token auth first, falls back to OIDC
+  date: 2025-07-31 10:52:22
