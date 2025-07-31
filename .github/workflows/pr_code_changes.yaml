@@ -55,3 +55,32 @@ jobs:
       - name: Test import
         run: |
           python -c "from statmatch import nnd_hotdeck; print('Import successful')"
+  
+  documentation_test:
+    needs: check_fork
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+      
+      - name: Install documentation dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[documentation]"
+      
+      - name: Build documentation test
+        run: |
+          cd docs
+          jupyter-book build .
+      
+      - name: Check documentation output
+        run: |
+          if [ ! -d "docs/_build/html" ]; then
+            echo "::error::Documentation build failed - no output directory"
+            exit 1
+          fi
+          echo "Documentation built successfully"

@@ -1,4 +1,8 @@
 - bump: patch
   changes:
     fixed:
-    - Fixed push CI workflows for documentation build and versioning
+    - Fixed yaml-changelog command to use python -m syntax
+    - Fixed documentation build by adding [documentation] extra without rpy2 dependency
+    - Updated all workflows to use Python 3.13
+    added:
+    - Added documentation build test to PR CI to catch issues before merge

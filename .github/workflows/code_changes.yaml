@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.12"]
+        python-version: ["3.13"]
     uses: ./.github/workflows/reusable_test.yaml
     with:
       os: ${{ matrix.os }}
@@ -30,12 +30,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.12
+          python-version: 3.13
       
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -e ".[dev]"
+          pip install -e ".[documentation]"
       
       - name: Build documentation
         run: |
