@@ -1,4 +1,4 @@
 - bump: patch
   changes:
-    fixed:
-    - Add id-token permission for PyPI publishing with trusted publishers
+    added:
+    - Manual PyPI publishing workflow for recovering from failed automated publishes
