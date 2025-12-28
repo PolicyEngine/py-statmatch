@@ -1,22 +1,69 @@
 # py-statmatch
 
-Python implementation of R's StatMatch package for statistical matching and data fusion.
+Python implementation of R's StatMatch package for statistical matching and data fusion, **plus advanced methods not available in R**.
 
 ## Overview
 
-`py-statmatch` provides tools for statistical matching (also known as data fusion or synthetic data matching) between different datasets. This package is a Python port of the popular R package [StatMatch](https://cran.r-project.org/web/packages/StatMatch/), implementing various methods to match records from different data sources that share some common variables.
+`py-statmatch` provides tools for statistical matching (also known as data fusion or synthetic data matching) between different datasets. This package started as a Python port of the R package [StatMatch](https://cran.r-project.org/web/packages/StatMatch/), but now includes additional modern techniques.
 
 ## Features
 
-- **NND.hotdeck**: Nearest Neighbor Distance Hot Deck matching
-  - Multiple distance metrics (Euclidean, Manhattan, Mahalanobis, etc.)
-  - Donation classes (match within groups/strata)
-  - Constrained matching using Hungarian algorithm
-  - Handle missing values appropriately
-- **Coming soon**:
-  - RANDwNND.hotdeck: Random distance hot deck
-  - rankNND.hotdeck: Rank distance hot deck
-  - create.fused: Create fused datasets from matching results
+### Core R StatMatch Functions (21 functions)
+All functions produce **identical results** to R's StatMatch package.
+
+- **Hot Deck Matching**
+  - `nnd_hotdeck`: Nearest Neighbor Distance Hot Deck
+  - `rand_hotdeck`: Random selection from k-nearest donors
+  - `rank_nnd_hotdeck`: ECDF-based rank matching
+  - `create_fused`: Create synthetic fused datasets
+
+- **Distance Functions**
+  - `gower_dist`: Gower's distance for mixed-type data
+  - `mahalanobis_dist`: Covariance-adjusted distance
+  - `maximum_dist`: Chebyshev/L-infinity distance
+
+- **Frechet Bounds**
+  - `frechet_bounds_cat`: Bounds for categorical data
+  - `fbwidths_by_x`: Bounds for all X variable subsets
+  - `p_bayes`: Pseudo-Bayes estimation
+
+- **Comparison & Plotting**
+  - `comp_cont`, `comp_prop`, `pw_assoc`
+  - `plot_bounds`, `plot_cont`, `plot_tab`
+
+- **Sample Utilities**
+  - `comb_samples`, `harmonize_x`, `fact2dummy`
+  - `mixed_mtc`, `sel_mtc_by_unc`
+
+### Advanced Methods (Beyond R)
+
+- **Multiple Imputation** (`mi_nnd_hotdeck`, `combine_mi_estimates`)
+  - Generate m imputed datasets with proper uncertainty quantification
+  - Rubin's combining rules for valid inference
+
+- **ML-Based Propensity Matching** (`propensity_hotdeck`)
+  - Gradient Boosting, Random Forest, Neural Network, Logistic
+  - Caliper matching support
+
+- **Optimal Transport** (`ot_hotdeck`, `wasserstein_dist`)
+  - Globally optimal matching via Earth Mover's Distance
+  - Entropy-regularized Sinkhorn for efficiency
+
+- **Bayesian Uncertainty** (`bayesian_match`, `credible_interval`)
+  - Posterior inference on matched values
+  - CIA (Conditional Independence Assumption) testing
+
+- **Embedding Distance** (`learn_embeddings`, `embedding_dist`)
+  - Target encoding and SVD for high-cardinality categoricals
+  - Better handling of complex categorical relationships
+
+- **Survey Weights** (`calibrate_weights`, `design_effect`, `replicate_variance`)
+  - Complex survey design support
+  - Weight calibration via iterative proportional fitting
+
+- **Diagnostics Dashboard** (`match_diagnostics`, `love_plot`)
+  - Balance tables, SMD calculation
+  - HTML report generation
 
 ## Installation
 
@@ -33,179 +80,138 @@ pip install -e ".[dev]"
 
 ## Quick Start
 
+### Basic Matching
+
 ```python
 import pandas as pd
-from statmatch import nnd_hotdeck
+from statmatch import nnd_hotdeck, create_fused
 
-# Create donor dataset (has X and Y variables)
-donor_data = pd.DataFrame({
+# Donor dataset (has X and Y variables)
+donors = pd.DataFrame({
     'age': [25, 30, 35, 40, 45],
     'income': [30000, 45000, 55000, 65000, 80000],
-    'education': ['HS', 'BA', 'BA', 'MA', 'PhD'],
-    'job_satisfaction': [7, 8, 6, 9, 8]  # Variable to donate
+    'satisfaction': [7, 8, 6, 9, 8]  # Variable to donate
 })
 
-# Create recipient dataset (has X variables but missing Y)
-recipient_data = pd.DataFrame({
+# Recipient dataset (has X but missing Y)
+recipients = pd.DataFrame({
     'age': [28, 33, 42],
-    'income': [35000, 50000, 70000],
-    'education': ['BA', 'BA', 'MA']
+    'income': [35000, 50000, 70000]
 })
 
 # Perform matching
 result = nnd_hotdeck(
-    data_rec=recipient_data,
-    data_don=donor_data,
-    match_vars=['age', 'income'],
-    dist_fun='euclidean'
+    data_rec=recipients,
+    data_don=donors,
+    match_vars=['age', 'income']
 )
-
-# Get matched donor indices
-print(result['noad.index'])  # [0, 1, 3] for example
 
 # Create fused dataset
-fused_data = recipient_data.copy()
-fused_data['job_satisfaction'] = donor_data.iloc[result['noad.index']]['job_satisfaction'].values
-```
-
-## API Reference
-
-### nnd_hotdeck
-
-```python
-nnd_hotdeck(
-    data_rec,
-    data_don,
-    match_vars,
-    don_class=None,
-    dist_fun="euclidean",
-    cut_don=None,
-    k=None,
-    w_don=None,
-    w_rec=None,
-    constr_alg=None
+fused = create_fused(
+    data_rec=recipients,
+    data_don=donors,
+    mtc_ids=result['mtc.ids'],
+    z_vars=['satisfaction']
 )
 ```
 
-**Parameters:**
-- `data_rec` (pd.DataFrame): The recipient dataset
-- `data_don` (pd.DataFrame): The donor dataset
-- `match_vars` (List[str]): List of variable names to use for matching
-- `don_class` (str, optional): Variable name defining donation classes
-- `dist_fun` (str): Distance function - "euclidean", "manhattan", "mahalanobis", etc.
-- `k` (int, optional): Maximum number of times each donor can be used
-- `constr_alg` (str, optional): Algorithm for constrained matching - "lpsolve" or "hungarian"
+### Multiple Imputation (Proper Uncertainty)
 
-**Returns:**
-- Dictionary containing:
-  - `mtc.ids`: DataFrame with recipient and donor IDs
-  - `noad.index`: Array of donor indices for each recipient (0-based)
-  - `dist.rd`: Array of distances between matched recipients and donors
+```python
+from statmatch import mi_nnd_hotdeck, mi_create_fused, mi_summary
+
+# Generate 5 imputed datasets
+mi_results = mi_nnd_hotdeck(
+    data_rec=recipients,
+    data_don=donors,
+    match_vars=['age', 'income'],
+    m=5
+)
+
+# Create fused datasets
+fused_datasets = mi_create_fused(
+    data_rec=recipients,
+    data_don=donors,
+    mi_results=mi_results,
+    z_vars=['satisfaction']
+)
+
+# Get summary with confidence intervals
+summary = mi_summary(fused_datasets, 'satisfaction')
+print(summary)  # estimate, std_error, ci_lower, ci_upper
+```
+
+### ML Propensity Matching
+
+```python
+from statmatch import propensity_hotdeck
+
+result = propensity_hotdeck(
+    data_rec=recipients,
+    data_don=donors,
+    match_vars=['age', 'income'],
+    estimator='gbm',  # or 'random_forest', 'neural_net', 'logistic'
+    caliper=0.1       # optional: max propensity score distance
+)
+```
+
+### Match Quality Diagnostics
+
+```python
+from statmatch import match_diagnostics
+
+diag = match_diagnostics(
+    result=result,
+    data_rec=recipients,
+    data_don=donors,
+    match_vars=['age', 'income']
+)
+
+# View balance table
+print(diag.balance_table())
+
+# Generate HTML report
+diag.to_html('match_report.html')
+
+# Love plot visualization
+diag.love_plot()
+```
+
+## Documentation
+
+Full documentation: https://policyengine.github.io/py-statmatch/
 
 ## Development
 
-### Running Tests
-
 ```bash
-# Run all tests
+# Run tests
 pytest
 
 # Run with coverage
 pytest --cov=statmatch
 
-# Run specific test
-pytest tests/test_nnd_hotdeck.py::TestNNDHotdeck::test_euclidean_distance_matching
-```
+# Run R comparison tests (requires R + rpy2 + StatMatch)
+pytest -k "against_r" -v
 
-### Code Style
-
-This project uses Black for code formatting:
-
-```bash
+# Format code
 black . -l 79
 ```
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License
 
 ## Citation
 
-If you use this package in your research, please cite both this package and the original R package:
-
 ```bibtex
 @software{pystatmatch2024,
-  title = {py-statmatch: Python implementation of R's StatMatch package},
+  title = {py-statmatch: Statistical matching in Python with advanced methods},
   author = {PolicyEngine},
   year = {2024},
   url = {https://github.com/PolicyEngine/py-statmatch}
 }
-
-@Manual{rstatmatch,
-  title = {StatMatch: Statistical Matching or Data Fusion},
-  author = {Marcello D'Orazio},
-  year = {2023},
-  note = {R package version 1.4.2},
-  url = {https://CRAN.R-project.org/package=StatMatch},
-}
 ```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-### PyPI Publishing Setup
-
-This repository uses GitHub Actions for automated PyPI publishing. To enable publishing:
-
-#### Option 1: PyPI API Token (Recommended for now)
-1. Create an account on [PyPI](https://pypi.org/) if you don't have one
-2. Generate an API token:
-   - Go to your PyPI account settings
-   - Scroll to "API tokens" section
-   - Click "Add API token"
-   - Give it a meaningful name (e.g., "py-statmatch GitHub Actions")
-   - Select scope: "Entire account" (for first publish) or "Project: py-statmatch" (after first publish)
-3. Add the token as a GitHub repository secret:
-   - Go to Settings → Secrets and variables → Actions
-   - Click "New repository secret"
-   - Name: `PYPI_API_TOKEN`
-   - Value: Your PyPI API token (starts with `pypi-`)
-
-#### Option 2: Trusted Publisher (OIDC) - Future Enhancement
-1. First manually publish the package once using Option 1
-2. Go to your PyPI project page
-3. Navigate to "Publishing" settings
-4. Add GitHub as a trusted publisher:
-   - Owner: `PolicyEngine`
-   - Repository: `py-statmatch`
-   - Workflow: `versioning.yaml`
-   - Environment: (leave blank)
-5. Remove the PYPI_API_TOKEN secret (optional)
-
-The workflows automatically detect which method to use based on available secrets.
-
-### Manual Publishing (Fallback)
-
-If automated publishing fails, you can publish manually:
-
-1. **Build the package locally:**
-   ```bash
-   python -m pip install build twine
-   python -m build
-   ```
-
-2. **Upload to PyPI:**
-   ```bash
-   python scripts/publish_to_pypi.py
-   # Or directly with twine:
-   # python -m twine upload --skip-existing dist/*
-   ```
-
-3. **First-time setup:**
-   - You'll need PyPI credentials (username: `__token__`, password: your-api-token)
-   - Store them in `~/.pypirc` or enter when prompted
 
 ## Acknowledgments
 
-This is a Python port of the R StatMatch package by Marcello D'Orazio. We are grateful for the original implementation which has been invaluable to the statistical matching community.
+Core matching functions are a Python port of the R StatMatch package by Marcello D'Orazio. Advanced methods (MI, propensity, OT, Bayesian, embeddings, diagnostics) are original contributions.
