@@ -152,4 +152,6 @@ cython_debug/
 .Rhistory
 .RData
 .Rproj.user/
-r-statmatch-src/
+r-statmatch-src/# Website
+website/node_modules/
+website/dist/
