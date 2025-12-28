@@ -86,28 +86,51 @@ class TestNNDHotdeck:
             )
 
         # Extract results from R NamedList
-        # Use getbyname method for NamedList
         dist_rd_r = np.array(result_r.getbyname("dist.rd"))
+        mtc_ids_flat = np.array(result_r.getbyname("mtc.ids"))
 
-        # Compare results
-        # Check that distances are similar (allowing for small numerical differences)
-        np.testing.assert_allclose(
-            result_py["dist.rd"], dist_rd_r, rtol=1e-5, atol=1e-8
-        )
+        # R returns results grouped by donation class, not in recipient order
+        # Parse mtc.ids (column-major: first n elements are rec.id, next n are don.id)
+        n = len(dist_rd_r)
+        rec_ids_r = np.array([int(x) for x in mtc_ids_flat[:n]])
+        don_ids_r = np.array([int(x) for x in mtc_ids_flat[n:]])
 
-        # Check that donor indices match
-        # Extract mtc.ids from R result
-        mtc_ids_r = result_r.getbyname("mtc.ids")
+        # Create mapping from recipient ID to (donor_id, distance) for R results
+        r_matches = {
+            rec_ids_r[i]: (don_ids_r[i], dist_rd_r[i]) for i in range(n)
+        }
 
-        # Convert R matrix to numpy array and get donor IDs
-        mtc_ids_array = np.array(mtc_ids_r)
-        # Get donor IDs from the second column
-        don_ids_r = mtc_ids_array[:, 1]
-        # Extract numeric part after "don="
-        don_idx_r = np.array(
-            [int(str(x).split("=")[1]) - 1 for x in don_ids_r]
-        )
-        np.testing.assert_array_equal(result_py["noad.index"], don_idx_r)
+        # Compare results by recipient ID (handles R's grouping by donation class)
+        for rec_id in range(len(recipient_data)):
+            py_dist = result_py["dist.rd"][rec_id]
+            r_don_id, r_dist = r_matches[rec_id]
+
+            # Distances should match exactly
+            np.testing.assert_allclose(
+                py_dist,
+                r_dist,
+                rtol=1e-5,
+                atol=1e-8,
+                err_msg=f"Distance mismatch for recipient {rec_id}",
+            )
+
+            # Donor IDs may differ due to ties (same distance, different donor)
+            # Both are valid if the distance is the same
+            py_don_id = result_py["noad.index"][rec_id]
+            if py_don_id != r_don_id:
+                # Verify this is a tie (same distance to both donors)
+                rec = recipient_data.iloc[rec_id][["x1", "x2", "x3"]].values
+                don_py = donor_data.iloc[py_don_id][["x1", "x2", "x3"]].values
+                don_r = donor_data.iloc[r_don_id][["x1", "x2", "x3"]].values
+                dist_to_py = np.sqrt(np.sum((rec - don_py) ** 2))
+                dist_to_r = np.sqrt(np.sum((rec - don_r) ** 2))
+                np.testing.assert_allclose(
+                    dist_to_py,
+                    dist_to_r,
+                    rtol=1e-5,
+                    atol=1e-8,
+                    err_msg=f"Donor mismatch for recipient {rec_id} is not a tie",
+                )
 
     def test_euclidean_distance_matching(self, sample_data):
         """Test matching with Euclidean distance."""
