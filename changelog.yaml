@@ -34,3 +34,11 @@
     - Workflows now gracefully handle missing PyPI credentials with helpful warnings
     - Manual publish workflow tries token auth first, falls back to OIDC
   date: 2025-07-31 10:52:22
+- bump: patch
+  changes:
+    added:
+    - Local publishing script for manual PyPI uploads
+    - Detailed manual publishing instructions in README
+    fixed:
+    - Manual PyPI publishing workflow to use API token directly
+  date: 2025-12-28 02:03:51

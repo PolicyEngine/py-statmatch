@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "py-statmatch"
-version = "0.2.0"
+version = "0.1.0"
 description = "Python implementation of R's StatMatch package for statistical matching and data fusion"
 authors = [
     {name = "PolicyEngine", email = "hello@policyengine.org"},

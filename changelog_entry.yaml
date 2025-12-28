@@ -1,7 +1,0 @@
-- bump: patch
-  changes:
-    fixed:
-    - Manual PyPI publishing workflow to use API token directly
-    added:
-    - Local publishing script for manual PyPI uploads
-    - Detailed manual publishing instructions in README
