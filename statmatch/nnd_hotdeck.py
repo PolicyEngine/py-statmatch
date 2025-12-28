@@ -18,6 +18,8 @@ def nnd_hotdeck(
     w_don: Optional[Union[np.ndarray, List[float]]] = None,
     w_rec: Optional[Union[np.ndarray, List[float]]] = None,
     constr_alg: Optional[str] = None,
+    rec_weights: Optional[Union[np.ndarray, List[float]]] = None,
+    don_weights: Optional[Union[np.ndarray, List[float]]] = None,
 ) -> Dict[str, Union[np.ndarray, pd.DataFrame]]:
     """
     Implement the Nearest Neighbor Distance Hot Deck (NND.hotdeck) method.
@@ -44,11 +46,18 @@ def nnd_hotdeck(
     k : Optional[int], default=None
         Maximum number of times each donor can be used (for constrained matching).
     w_don : Optional[Union[np.ndarray, List[float]]], default=None
-        Weights for donor units.
+        Weights for donor units (legacy parameter, use don_weights).
     w_rec : Optional[Union[np.ndarray, List[float]]], default=None
-        Weights for recipient units.
+        Weights for recipient units (legacy parameter, use rec_weights).
     constr_alg : Optional[str], default=None
         Algorithm for constrained matching. Options: "lpsolve", "hungarian".
+    rec_weights : Optional[Union[np.ndarray, List[float]]], default=None
+        Survey weights for recipient units. Used for weighted standardization
+        of matching variables and weighted sampling in constrained matching.
+    don_weights : Optional[Union[np.ndarray, List[float]]], default=None
+        Survey weights for donor units. Used for weighted standardization
+        of matching variables. In constrained matching with ties, donors
+        with higher weights are preferred.
 
     Returns
     -------
@@ -83,6 +92,17 @@ def nnd_hotdeck(
     n_rec = len(data_rec)
     n_don = len(data_don)
 
+    # Handle survey weights
+    if rec_weights is not None:
+        rec_weights = np.asarray(rec_weights, dtype=float)
+    else:
+        rec_weights = np.ones(n_rec)
+
+    if don_weights is not None:
+        don_weights = np.asarray(don_weights, dtype=float)
+    else:
+        don_weights = np.ones(n_don)
+
     # Arrays to store results
     donor_indices = np.zeros(n_rec, dtype=int)
     distances = np.zeros(n_rec)
@@ -107,6 +127,10 @@ def nnd_hotdeck(
             rec_data_i = data_rec.iloc[[i]][match_vars].values
             don_data_cls = data_don.loc[don_mask, match_vars].values
 
+            # Get weights for this class
+            rec_weights_i = rec_weights[[i]]
+            don_weights_cls = don_weights[don_mask]
+
             # Find match for this recipient
             cls_indices, cls_distances = _find_matches(
                 rec_data_i,
@@ -114,6 +138,8 @@ def nnd_hotdeck(
                 dist_fun,
                 k if k is None else 1,
                 constr_alg,
+                rec_weights_i,
+                don_weights_cls,
             )
 
             # Convert local indices to global indices
@@ -126,7 +152,13 @@ def nnd_hotdeck(
         don_data = data_don[match_vars].values
 
         donor_indices, distances = _find_matches(
-            rec_data, don_data, dist_fun, k, constr_alg
+            rec_data,
+            don_data,
+            dist_fun,
+            k,
+            constr_alg,
+            rec_weights,
+            don_weights,
         )
 
     # Create results dictionary
@@ -149,6 +181,8 @@ def _find_matches(
     dist_fun: str,
     k: Optional[int] = None,
     constr_alg: Optional[str] = None,
+    rec_weights: Optional[np.ndarray] = None,
+    don_weights: Optional[np.ndarray] = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
     Find nearest neighbor matches between recipients and donors.
@@ -165,6 +199,10 @@ def _find_matches(
         Maximum times each donor can be used.
     constr_alg : Optional[str]
         Constrained matching algorithm.
+    rec_weights : Optional[np.ndarray]
+        Survey weights for recipient observations.
+    don_weights : Optional[np.ndarray]
+        Survey weights for donor observations.
 
     Returns
     -------
@@ -173,6 +211,12 @@ def _find_matches(
     """
     n_rec = rec_data.shape[0]
     n_don = don_data.shape[0]
+
+    # Initialize weights if not provided
+    if rec_weights is None:
+        rec_weights = np.ones(n_rec)
+    if don_weights is None:
+        don_weights = np.ones(n_don)
 
     # Handle missing values by imputing with column means
     if np.any(np.isnan(rec_data)) or np.any(np.isnan(don_data)):
@@ -186,6 +230,16 @@ def _find_matches(
         for i in range(rec_data.shape[1]):
             rec_data[np.isnan(rec_data[:, i]), i] = col_means[i]
             don_data[np.isnan(don_data[:, i]), i] = col_means[i]
+
+    # Apply weighted standardization if weights are not uniform
+    use_weighted_std = not np.allclose(
+        rec_weights, rec_weights[0]
+    ) or not np.allclose(don_weights, don_weights[0])
+
+    if use_weighted_std:
+        rec_data, don_data = _weighted_standardize(
+            rec_data, don_data, rec_weights, don_weights
+        )
 
     # Compute distance matrix
     if dist_fun.lower() == "manhattan":
@@ -216,7 +270,7 @@ def _find_matches(
     if k is not None and constr_alg is not None:
         # Constrained matching
         donor_indices, distances = _constrained_matching(
-            dist_matrix, k, constr_alg
+            dist_matrix, k, constr_alg, don_weights
         )
     else:
         # Unconstrained matching - find nearest neighbor for each recipient
@@ -226,8 +280,65 @@ def _find_matches(
     return donor_indices, distances
 
 
+def _weighted_standardize(
+    rec_data: np.ndarray,
+    don_data: np.ndarray,
+    rec_weights: np.ndarray,
+    don_weights: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Standardize data using weighted means and standard deviations.
+
+    Parameters
+    ----------
+    rec_data : np.ndarray
+        Recipient data matrix.
+    don_data : np.ndarray
+        Donor data matrix.
+    rec_weights : np.ndarray
+        Weights for recipients.
+    don_weights : np.ndarray
+        Weights for donors.
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        Standardized recipient and donor data.
+    """
+    # Compute pooled weighted mean and std
+    total_weight = np.sum(rec_weights) + np.sum(don_weights)
+
+    weighted_sum_rec = np.sum(rec_data * rec_weights[:, np.newaxis], axis=0)
+    weighted_sum_don = np.sum(don_data * don_weights[:, np.newaxis], axis=0)
+    weighted_mean = (weighted_sum_rec + weighted_sum_don) / total_weight
+
+    # Compute weighted variance
+    dev_rec = rec_data - weighted_mean
+    dev_don = don_data - weighted_mean
+    weighted_sq_dev_rec = np.sum(
+        dev_rec**2 * rec_weights[:, np.newaxis], axis=0
+    )
+    weighted_sq_dev_don = np.sum(
+        dev_don**2 * don_weights[:, np.newaxis], axis=0
+    )
+    weighted_var = (weighted_sq_dev_rec + weighted_sq_dev_don) / total_weight
+    weighted_std = np.sqrt(weighted_var)
+
+    # Avoid division by zero
+    weighted_std = np.where(weighted_std == 0, 1.0, weighted_std)
+
+    # Standardize
+    rec_data_std = (rec_data - weighted_mean) / weighted_std
+    don_data_std = (don_data - weighted_mean) / weighted_std
+
+    return rec_data_std, don_data_std
+
+
 def _constrained_matching(
-    dist_matrix: np.ndarray, k: int, algorithm: str
+    dist_matrix: np.ndarray,
+    k: int,
+    algorithm: str,
+    don_weights: Optional[np.ndarray] = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
     Perform constrained matching where each donor is used at most k times.
@@ -240,6 +351,9 @@ def _constrained_matching(
         Maximum times each donor can be used.
     algorithm : str
         Algorithm to use ('lpsolve' or 'hungarian').
+    don_weights : Optional[np.ndarray]
+        Donor weights. Higher-weight donors are preferred when distances
+        are equal.
 
     Returns
     -------
@@ -248,10 +362,21 @@ def _constrained_matching(
     """
     n_rec, n_don = dist_matrix.shape
 
+    if don_weights is None:
+        don_weights = np.ones(n_don)
+
     if algorithm.lower() in ["lpsolve", "hungarian"]:
         # Create expanded distance matrix
         # Each donor appears k times
         expanded_dist = np.tile(dist_matrix, (1, k))
+
+        # Apply small penalty for low-weight donors to break ties
+        # Normalize weights and create a small preference factor
+        normalized_weights = don_weights / np.max(don_weights)
+        # High weight -> small penalty (preferred), low weight -> larger penalty
+        weight_penalty = (1 - normalized_weights) * 1e-10
+        expanded_penalty = np.tile(weight_penalty, k)
+        expanded_dist = expanded_dist + expanded_penalty
 
         # Use Hungarian algorithm for assignment
         row_ind, col_ind = linear_sum_assignment(expanded_dist)
@@ -259,10 +384,10 @@ def _constrained_matching(
         # Convert column indices back to original donor indices
         donor_indices = col_ind % n_don
 
-        # Get corresponding distances
+        # Get corresponding distances (without the weight penalty)
         distances = dist_matrix[row_ind, donor_indices]
     else:
-        # Fallback to greedy algorithm
+        # Fallback to greedy algorithm with weighted tie-breaking
         donor_indices = np.zeros(n_rec, dtype=int)
         distances = np.zeros(n_rec)
         donor_usage = np.zeros(n_don, dtype=int)
@@ -284,9 +409,19 @@ def _constrained_matching(
             available_dists = dist_matrix[rec_idx].copy()
             available_dists[~available_donors] = np.inf
 
-            best_donor = np.argmin(available_dists)
+            # For tie-breaking, prefer donors with higher weights
+            min_dist = np.min(available_dists)
+            is_tied = np.isclose(available_dists, min_dist)
+
+            if np.sum(is_tied) > 1:
+                # Multiple donors at same distance - prefer higher weight
+                tied_weights = np.where(is_tied, don_weights, -np.inf)
+                best_donor = np.argmax(tied_weights)
+            else:
+                best_donor = np.argmin(available_dists)
+
             donor_indices[rec_idx] = best_donor
-            distances[rec_idx] = available_dists[best_donor]
+            distances[rec_idx] = dist_matrix[rec_idx, best_donor]
             donor_usage[best_donor] += 1
 
     return donor_indices, distances

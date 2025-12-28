@@ -14,6 +14,20 @@ from .comparison import comp_cont, comp_prop, pw_assoc
 from .sample_utils import comb_samples, fact2dummy, harmonize_x
 from .mixed_mtc import mixed_mtc, sel_mtc_by_unc
 from .frechet import frechet_bounds_cat, fbwidths_by_x, p_bayes
+from .diagnostics import (
+    MatchDiagnostics,
+    ks_test_balance,
+    love_plot,
+    match_diagnostics,
+    standardized_mean_diff,
+    variance_ratio,
+)
+from .survey_utils import (
+    calibrate_weights,
+    design_effect,
+    replicate_variance,
+    weighted_distance,
+)
 
 __version__ = "0.1.0"
 __all__ = [
@@ -46,4 +60,16 @@ __all__ = [
     "frechet_bounds_cat",
     "fbwidths_by_x",
     "p_bayes",
+    # Diagnostics
+    "MatchDiagnostics",
+    "ks_test_balance",
+    "love_plot",
+    "match_diagnostics",
+    "standardized_mean_diff",
+    "variance_ratio",
+    # Survey utilities
+    "calibrate_weights",
+    "design_effect",
+    "replicate_variance",
+    "weighted_distance",
 ]
