@@ -105,13 +105,20 @@ def p_bayes(
         raise ValueError(f"Unknown method: {method}")
 
     # Compute pseudo-Bayes estimate
-    # ep_h = n/(n+K)*p_h + K/(n+K)*gamma_h
-    # which is equivalent to:
-    # ep_h = (n*p_h + K*gamma_h) / (n + K)
-    # ep_h = (x + K*gamma_h) / (n + K)
-    weight_data = n / (n + K)
-    weight_prior = K / (n + K)
-    pseudo_bayes = weight_data * x + weight_prior * n * gamma_h
+    # For constant methods (Jeffreys, minimax, invcat, user):
+    #   Simply add the constant to each cell
+    # For model-based methods (m.ind, h.assoc):
+    #   Use weighted average: ep_h = n/(n+K)*p_h + K/(n+K)*gamma_h
+    if method.lower() in ["jeffreys", "minimax", "invcat", "user"]:
+        # Just add the constant
+        pseudo_bayes = x + const_val
+    else:
+        # Weighted average for m.ind and h.assoc
+        # ep_h = n/(n+K)*p_h + K/(n+K)*gamma_h then multiply by n
+        weight_data = n / (n + K)
+        weight_prior = K / (n + K)
+        p_est = weight_data * p_h + weight_prior * gamma_h
+        pseudo_bayes = p_est * n
 
     # Build prior in terms of expected counts (for compatibility)
     prior = n * gamma_h

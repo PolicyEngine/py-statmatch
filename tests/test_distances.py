@@ -49,9 +49,7 @@ class TestGowerDist:
             {
                 "num1": np.random.normal(0, 1, 10),
                 "num2": np.random.uniform(0, 10, 10),
-                "cat1": pd.Categorical(
-                    np.random.choice(["A", "B", "C"], 10)
-                ),
+                "cat1": pd.Categorical(np.random.choice(["A", "B", "C"], 10)),
                 "ord1": pd.Categorical(
                     np.random.choice(["low", "medium", "high"], 10),
                     categories=["low", "medium", "high"],
@@ -226,9 +224,7 @@ class TestGowerDist:
         result = gower_dist(data_x)
 
         # Check symmetry
-        np.testing.assert_allclose(
-            result, result.T, rtol=1e-10, atol=1e-10
-        )
+        np.testing.assert_allclose(result, result.T, rtol=1e-10, atol=1e-10)
 
         # Check diagonal is zero
         np.testing.assert_allclose(
@@ -409,9 +405,7 @@ class TestMaximumDist:
         with localconverter(ro.default_converter + pandas2ri.converter):
             data_x_r = ro.conversion.py2rpy(data_x)
             data_y_r = ro.conversion.py2rpy(data_y)
-            result_r = np.array(
-                statmatch_r.maximum_dist(data_x_r, data_y_r)
-            )
+            result_r = np.array(statmatch_r.maximum_dist(data_x_r, data_y_r))
 
         np.testing.assert_allclose(
             result_py,
@@ -491,9 +485,7 @@ class TestMaximumDist:
         result = maximum_dist(data_x)
 
         # Check symmetry
-        np.testing.assert_allclose(
-            result, result.T, rtol=1e-10, atol=1e-10
-        )
+        np.testing.assert_allclose(result, result.T, rtol=1e-10, atol=1e-10)
 
         # Check diagonal is zero
         np.testing.assert_allclose(

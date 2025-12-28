@@ -358,8 +358,8 @@ def maximum_dist(
             combined = np.vstack([xx, yy])
             ranked = np.zeros_like(combined)
             for k in range(combined.shape[1]):
-                ranked[:, k] = (
-                    rankdata(combined[:, k], method="average") / (n_total + 1)
+                ranked[:, k] = rankdata(combined[:, k], method="average") / (
+                    n_total + 1
                 )
             rx = ranked[:n_x]
             ry = ranked[n_x:]

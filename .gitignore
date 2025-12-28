@@ -68,6 +68,10 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+_build/
+
+# JupyterBook backup files
+docs/._*.bak
 
 # PyBuilder
 .pybuilder/
