@@ -80,24 +80,18 @@ def rank_nnd_hotdeck(
     if don_class is not None:
         if don_class not in data_rec.columns:
             raise ValueError(
-                f"Donation class variable '{don_class}' not found in "
-                "recipient data"
+                f"Donation class variable '{don_class}' not found in recipient data"
             )
         if don_class not in data_don.columns:
             raise ValueError(
-                f"Donation class variable '{don_class}' not found in "
-                "donor data"
+                f"Donation class variable '{don_class}' not found in donor data"
             )
 
     if weight_rec is not None and weight_rec not in data_rec.columns:
-        raise ValueError(
-            f"Weight variable '{weight_rec}' not found in recipient data"
-        )
+        raise ValueError(f"Weight variable '{weight_rec}' not found in recipient data")
 
     if weight_don is not None and weight_don not in data_don.columns:
-        raise ValueError(
-            f"Weight variable '{weight_don}' not found in donor data"
-        )
+        raise ValueError(f"Weight variable '{weight_don}' not found in donor data")
 
     # Initialize results
     n_rec = len(data_rec)
@@ -182,9 +176,7 @@ def rank_nnd_hotdeck(
     return results
 
 
-def _weighted_ecdf(
-    x: np.ndarray, w: Optional[np.ndarray] = None
-) -> np.ndarray:
+def _weighted_ecdf(x: np.ndarray, w: Optional[np.ndarray] = None) -> np.ndarray:
     """
     Compute weighted empirical cumulative distribution function values.
 
@@ -292,17 +284,13 @@ def _rank_nnd_match(
         distances = min_distances
 
         # Count donors at minimum distance
-        noad = np.sum(
-            np.isclose(dist_matrix, min_distances[:, np.newaxis]), axis=1
-        )
+        noad = np.sum(np.isclose(dist_matrix, min_distances[:, np.newaxis]), axis=1)
 
         # Find donor indices - when multiple donors at same distance,
         # select one randomly (matching R behavior)
         donor_indices = np.zeros(n_rec, dtype=int)
         for i in range(n_rec):
-            candidates = np.where(
-                np.isclose(dist_matrix[i], min_distances[i])
-            )[0]
+            candidates = np.where(np.isclose(dist_matrix[i], min_distances[i]))[0]
             if len(candidates) == 1:
                 donor_indices[i] = candidates[0]
             else:

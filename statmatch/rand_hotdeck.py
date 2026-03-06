@@ -64,9 +64,7 @@ def rand_hotdeck(
     # Validate cut_don parameter
     valid_cut_don = ["rot", "span", "exact", "min", "k.dist"]
     if cut_don not in valid_cut_don:
-        raise ValueError(
-            f"Invalid cut_don '{cut_don}'. Must be one of {valid_cut_don}"
-        )
+        raise ValueError(f"Invalid cut_don '{cut_don}'. Must be one of {valid_cut_don}")
 
     # Validate k parameter for methods that require it
     if cut_don in ["span", "exact", "k.dist"] and k is None:
@@ -76,13 +74,9 @@ def rand_hotdeck(
     if match_vars is not None:
         for var in match_vars:
             if var not in data_rec.columns:
-                raise ValueError(
-                    f"Match variable '{var}' not found in recipient data"
-                )
+                raise ValueError(f"Match variable '{var}' not found in recipient data")
             if var not in data_don.columns:
-                raise ValueError(
-                    f"Match variable '{var}' not found in donor data"
-                )
+                raise ValueError(f"Match variable '{var}' not found in donor data")
 
     # Validate don_class
     if don_class is not None:
@@ -91,15 +85,11 @@ def rand_hotdeck(
                 f"Donation class '{don_class}' not found in recipient data"
             )
         if don_class not in data_don.columns:
-            raise ValueError(
-                f"Donation class '{don_class}' not found in donor data"
-            )
+            raise ValueError(f"Donation class '{don_class}' not found in donor data")
 
     # Validate weight_don
     if weight_don is not None and weight_don not in data_don.columns:
-        raise ValueError(
-            f"Weight variable '{weight_don}' not found in donor data"
-        )
+        raise ValueError(f"Weight variable '{weight_don}' not found in donor data")
 
     n_rec = len(data_rec)
     n_don = len(data_don)
@@ -109,9 +99,7 @@ def rand_hotdeck(
         # No donation classes - process all together
         if match_vars is None:
             # Random selection without matching
-            return _random_selection(
-                data_rec, data_don, weight_don, n_rec, n_don
-            )
+            return _random_selection(data_rec, data_don, weight_don, n_rec, n_don)
         else:
             # Distance-based matching
             return _rand_nnd_match(
@@ -153,9 +141,7 @@ def _random_selection(
         # Weighted selection
         weights = data_don[weight_don].values
         probs = weights / weights.sum()
-        donor_indices = np.random.choice(
-            n_don, size=n_rec, replace=True, p=probs
-        )
+        donor_indices = np.random.choice(n_don, size=n_rec, replace=True, p=probs)
 
     mtc_ids = pd.DataFrame(
         {
@@ -213,8 +199,8 @@ def _rand_nnd_match(
         distances = dist_matrix[i, :]
 
         # Find subset of closest donors
-        subset_indices, subset_distances, subset_weights, cut_d = (
-            _get_donor_subset(distances, weights, cut_don, k, effective_k)
+        subset_indices, subset_distances, subset_weights, cut_d = _get_donor_subset(
+            distances, weights, cut_don, k, effective_k
         )
 
         noad[i] = len(subset_indices)
@@ -283,9 +269,7 @@ def _process_by_class(
     # Check that all recipient classes have donors
     for cls in unique_classes:
         if not np.any(don_classes == cls):
-            raise ValueError(
-                f"Donation class '{cls}' has no donors in donor data"
-            )
+            raise ValueError(f"Donation class '{cls}' has no donors in donor data")
 
     # Initialize result arrays
     donor_indices = np.zeros(n_rec, dtype=int)
@@ -347,9 +331,7 @@ def _process_by_class(
                 distances = dist_matrix[j, :]
 
                 subset_indices, subset_distances, subset_weights, cut_d = (
-                    _get_donor_subset(
-                        distances, weights, cut_don, k, effective_k
-                    )
+                    _get_donor_subset(distances, weights, cut_don, k, effective_k)
                 )
 
                 noad[rec_i] = len(subset_indices)
@@ -425,9 +407,7 @@ def _compute_distances(
         ranges[ranges == 0] = 1  # Avoid division by zero
         rec_norm = rec_data / ranges
         don_norm = don_data / ranges
-        return (
-            cdist(rec_norm, don_norm, metric="cityblock") / rec_data.shape[1]
-        )
+        return cdist(rec_norm, don_norm, metric="cityblock") / rec_data.shape[1]
     else:
         # Default to Euclidean
         return cdist(rec_data, don_data, metric="euclidean")

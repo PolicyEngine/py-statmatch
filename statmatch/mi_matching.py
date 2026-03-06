@@ -106,9 +106,7 @@ def mi_nnd_hotdeck(
                 **kwargs,
             )
         else:
-            raise ValueError(
-                f"Unknown method: {method}. Use 'bootstrap' or 'noise'."
-            )
+            raise ValueError(f"Unknown method: {method}. Use 'bootstrap' or 'noise'.")
 
         results.append(result)
 
@@ -218,9 +216,7 @@ def _mi_noise_match(
                 dist_vec = cdist(rec_data_i, don_data_cls, dist_fun.lower())[0]
 
             # Add noise to distances
-            noise = np.random.normal(
-                0, noise_scale * np.std(dist_vec), len(dist_vec)
-            )
+            noise = np.random.normal(0, noise_scale * np.std(dist_vec), len(dist_vec))
             dist_vec_noisy = np.maximum(0, dist_vec + noise)
 
             # Find best match with noisy distances

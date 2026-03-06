@@ -5,8 +5,8 @@
 help:
 	@echo "Available commands:"
 	@echo "  make install          Install package with development dependencies"
-	@echo "  make format           Format code with Black and isort"
-	@echo "  make lint             Check code style with Black and flake8"
+	@echo "  make format           Format code with Ruff"
+	@echo "  make lint             Check code formatting with Ruff"
 	@echo "  make test             Run test suite"
 	@echo "  make test-cov         Run tests with coverage report"
 	@echo "  make documentation    Build documentation"
@@ -20,13 +20,10 @@ install:
 	pip install -e ".[dev]"
 
 format:
-	black . -l 79
-	isort . --profile black --line-length 79
+	ruff format .
 
 lint:
-	black . -l 79 --check
-	isort . --profile black --line-length 79 --check-only
-	flake8 statmatch tests --max-line-length 79 --extend-ignore E203,W503
+	ruff format --check .
 
 test:
 	pytest tests/ -v

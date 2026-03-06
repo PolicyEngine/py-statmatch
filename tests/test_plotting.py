@@ -98,19 +98,13 @@ class TestPlotBounds:
 
         plt.close(fig)
 
-    def test_plot_bounds_shows_uncertainty_range(
-        self, frechet_bounds_output_with_x
-    ):
+    def test_plot_bounds_shows_uncertainty_range(self, frechet_bounds_output_with_x):
         """Test that the plot displays uncertainty ranges correctly."""
         fig = plot_bounds(frechet_bounds_output_with_x)
 
         # Check that the figure contains line elements (for bounds)
         ax = fig.axes[0]
-        lines = [
-            child
-            for child in ax.get_children()
-            if isinstance(child, plt.Line2D)
-        ]
+        lines = [child for child in ax.get_children() if isinstance(child, plt.Line2D)]
         # Should have some lines (dotted for unconditional, solid for cond.)
         assert len(lines) > 0
 
@@ -258,9 +252,7 @@ class TestPlotTab:
                 "education": np.random.choice(
                     ["HS", "College", "Graduate"], 100, p=[0.4, 0.4, 0.2]
                 ),
-                "region": np.random.choice(
-                    ["North", "South", "East", "West"], 100
-                ),
+                "region": np.random.choice(["North", "South", "East", "West"], 100),
                 "weight": np.random.uniform(0.5, 1.5, 100),
             }
         )
@@ -269,9 +261,7 @@ class TestPlotTab:
                 "education": np.random.choice(
                     ["HS", "College", "Graduate"], 80, p=[0.3, 0.45, 0.25]
                 ),
-                "region": np.random.choice(
-                    ["North", "South", "East", "West"], 80
-                ),
+                "region": np.random.choice(["North", "South", "East", "West"], 80),
                 "weight": np.random.uniform(0.8, 1.2, 80),
             }
         )
@@ -316,9 +306,7 @@ class TestPlotTab:
     def test_plot_tab_with_weights(self, sample_categorical_data):
         """Test with sample weights."""
         data_a, data_b = sample_categorical_data
-        fig = plot_tab(
-            data_a, data_b, xlab_a="education", w_a="weight", w_b="weight"
-        )
+        fig = plot_tab(data_a, data_b, xlab_a="education", w_a="weight", w_b="weight")
         assert isinstance(fig, plt.Figure)
         plt.close(fig)
 
@@ -354,9 +342,7 @@ class TestPlotTab:
 
         plt.close(fig)
 
-    def test_plot_tab_mismatched_variable_count_raises(
-        self, sample_categorical_data
-    ):
+    def test_plot_tab_mismatched_variable_count_raises(self, sample_categorical_data):
         """Test that mismatched variable count raises error."""
         data_a, data_b = sample_categorical_data
         with pytest.raises(ValueError):

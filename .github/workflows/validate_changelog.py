@@ -14,9 +14,7 @@ try:
 
     for item in entry:
         if "bump" not in item:
-            print(
-                "::error::Each entry must have a bump field (major, minor, or patch)"
-            )
+            print("::error::Each entry must have a bump field (major, minor, or patch)")
             sys.exit(1)
         if item["bump"] not in ["major", "minor", "patch"]:
             print(f"::error::Invalid bump type: {item['bump']}")

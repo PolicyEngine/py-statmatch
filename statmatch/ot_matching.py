@@ -88,18 +88,14 @@ def ot_hotdeck(
     # Validate inputs
     if not all(var in data_rec.columns for var in match_vars):
         missing = [var for var in match_vars if var not in data_rec.columns]
-        raise ValueError(
-            f"Match variables {missing} not found in recipient data"
-        )
+        raise ValueError(f"Match variables {missing} not found in recipient data")
 
     if not all(var in data_don.columns for var in match_vars):
         missing = [var for var in match_vars if var not in data_don.columns]
         raise ValueError(f"Match variables {missing} not found in donor data")
 
     if method not in ["sinkhorn", "emd"]:
-        raise ValueError(
-            f"Unknown method '{method}'. Use 'sinkhorn' or 'emd'."
-        )
+        raise ValueError(f"Unknown method '{method}'. Use 'sinkhorn' or 'emd'.")
 
     # Extract matching variable data
     rec_data = data_rec[match_vars].values.astype(float)
@@ -119,18 +115,14 @@ def ot_hotdeck(
     if method == "emd":
         transport_plan = _solve_emd(cost_matrix, a, b)
     else:  # sinkhorn
-        transport_plan = _sinkhorn(
-            cost_matrix, a, b, reg, max_iter=max_iter, tol=tol
-        )
+        transport_plan = _sinkhorn(cost_matrix, a, b, reg, max_iter=max_iter, tol=tol)
 
     # Extract assignments from transport plan
     # For each recipient, find the donor with maximum transport mass
     donor_indices = np.argmax(transport_plan, axis=1)
 
     # Compute distances for matched pairs
-    distances = np.array(
-        [cost_matrix[i, donor_indices[i]] for i in range(n_rec)]
-    )
+    distances = np.array([cost_matrix[i, donor_indices[i]] for i in range(n_rec)])
 
     # Compute total transport cost
     total_cost = np.sum(transport_plan * cost_matrix)
@@ -463,7 +455,5 @@ def _logsumexp(x: np.ndarray, axis: int = None) -> np.ndarray:
         The log-sum-exp of x along the specified axis.
     """
     x_max = np.max(x, axis=axis, keepdims=True)
-    result = x_max + np.log(
-        np.sum(np.exp(x - x_max), axis=axis, keepdims=True)
-    )
+    result = x_max + np.log(np.sum(np.exp(x - x_max), axis=axis, keepdims=True))
     return np.squeeze(result, axis=axis)

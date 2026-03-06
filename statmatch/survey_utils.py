@@ -368,8 +368,6 @@ def replicate_variance(
         variance = np.var(theta_b, ddof=1)
 
     else:
-        raise ValueError(
-            f"Unknown method '{method}'. Use 'jackknife' or 'bootstrap'."
-        )
+        raise ValueError(f"Unknown method '{method}'. Use 'jackknife' or 'bootstrap'.")
 
     return variance

@@ -228,9 +228,7 @@ class TestEmbeddingDist:
         )
         return data_x, data_y
 
-    def test_distance_matrix_shape(
-        self, sample_embeddings, sample_data_for_dist
-    ):
+    def test_distance_matrix_shape(self, sample_embeddings, sample_data_for_dist):
         """Test that distance matrix has correct shape."""
         data_x, data_y = sample_data_for_dist
 
@@ -478,9 +476,7 @@ class TestIntegration:
             ),
         )
 
-        data_rec = pd.DataFrame(
-            {"category": recipient_categories, "x": recipient_x}
-        )
+        data_rec = pd.DataFrame({"category": recipient_categories, "x": recipient_x})
 
         # Learn embeddings from donor data
         embeddings = learn_embeddings(

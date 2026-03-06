@@ -174,9 +174,7 @@ class TestPropensityHotdeck:
         "estimator",
         ["logistic", "gbm", "random_forest", "neural_net"],
     )
-    def test_all_estimators_produce_valid_matches(
-        self, sample_data, estimator
-    ):
+    def test_all_estimators_produce_valid_matches(self, sample_data, estimator):
         """Test that all estimators produce valid matches."""
         donor_data, recipient_data = sample_data
         match_vars = ["x1", "x2", "x3"]
@@ -313,12 +311,8 @@ class TestBalanceImprovement:
             pooled_std = np.sqrt((np.var(rec_vals) + np.var(don_vals)) / 2)
             return abs(np.mean(rec_vals) - np.mean(don_vals)) / pooled_std
 
-        initial_smd_x1 = calc_smd(
-            recipient_data["x1"].values, donor_data["x1"].values
-        )
-        initial_smd_x2 = calc_smd(
-            recipient_data["x2"].values, donor_data["x2"].values
-        )
+        initial_smd_x1 = calc_smd(recipient_data["x1"].values, donor_data["x1"].values)
+        initial_smd_x2 = calc_smd(recipient_data["x2"].values, donor_data["x2"].values)
 
         # Perform propensity matching
         result = propensity_hotdeck(
@@ -331,12 +325,8 @@ class TestBalanceImprovement:
         matched_donors = donor_data.iloc[result["noad.index"]]
 
         # Calculate post-matching imbalance
-        post_smd_x1 = calc_smd(
-            recipient_data["x1"].values, matched_donors["x1"].values
-        )
-        post_smd_x2 = calc_smd(
-            recipient_data["x2"].values, matched_donors["x2"].values
-        )
+        post_smd_x1 = calc_smd(recipient_data["x1"].values, matched_donors["x1"].values)
+        post_smd_x2 = calc_smd(recipient_data["x2"].values, matched_donors["x2"].values)
 
         # Balance should improve (SMD should decrease)
         # Note: This is a statistical test so we use a soft assertion

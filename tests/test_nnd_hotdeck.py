@@ -48,9 +48,7 @@ class TestNNDHotdeck:
                 "x1": np.random.normal(0.5, 1, n_recipients),
                 "x2": np.random.normal(0.5, 2, n_recipients),
                 "x3": np.random.uniform(1, 11, n_recipients),
-                "donation_class": np.random.choice(
-                    ["A", "B", "C"], n_recipients
-                ),
+                "donation_class": np.random.choice(["A", "B", "C"], n_recipients),
             }
         )
 
@@ -96,9 +94,7 @@ class TestNNDHotdeck:
         don_ids_r = np.array([int(x) for x in mtc_ids_flat[n:]])
 
         # Create mapping from recipient ID to (donor_id, distance) for R results
-        r_matches = {
-            rec_ids_r[i]: (don_ids_r[i], dist_rd_r[i]) for i in range(n)
-        }
+        r_matches = {rec_ids_r[i]: (don_ids_r[i], dist_rd_r[i]) for i in range(n)}
 
         # Compare results by recipient ID (handles R's grouping by donation class)
         for rec_id in range(len(recipient_data)):
@@ -215,9 +211,7 @@ class TestNNDHotdeck:
         )
 
         # Count how many times each donor is used
-        donor_counts = np.bincount(
-            result["noad.index"], minlength=len(donor_data)
-        )
+        donor_counts = np.bincount(result["noad.index"], minlength=len(donor_data))
 
         # Check constraint is satisfied
         assert np.all(donor_counts <= 2)
@@ -289,9 +283,7 @@ class TestNNDHotdeck:
         fused_data = result["mtc.ids"].copy()
 
         # Add donated variable
-        fused_data["y_donated"] = donor_data.iloc[result["noad.index"]][
-            "y"
-        ].values
+        fused_data["y_donated"] = donor_data.iloc[result["noad.index"]]["y"].values
 
         # Check that fused dataset has correct shape
         assert len(fused_data) == len(recipient_data)

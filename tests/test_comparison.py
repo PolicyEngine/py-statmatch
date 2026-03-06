@@ -286,9 +286,7 @@ class TestCompProp:
 
         # Extract R results
         meas_r = dict(zip(result_r.rx2("meas").names, result_r.rx2("meas")))
-        chi_sq_r = dict(
-            zip(result_r.rx2("chi.sq").names, result_r.rx2("chi.sq"))
-        )
+        chi_sq_r = dict(zip(result_r.rx2("chi.sq").names, result_r.rx2("chi.sq")))
 
         # Compare measures
         np.testing.assert_allclose(
@@ -346,9 +344,7 @@ class TestPwAssoc:
 
         data = pd.DataFrame(
             {
-                "y": pd.Categorical(
-                    np.random.choice(["low", "medium", "high"], n)
-                ),
+                "y": pd.Categorical(np.random.choice(["low", "medium", "high"], n)),
                 "x1": pd.Categorical(np.random.choice(["A", "B", "C"], n)),
                 "x2": pd.Categorical(np.random.choice(["yes", "no"], n)),
                 "x3": pd.Categorical(
@@ -478,9 +474,7 @@ class TestPwAssoc:
         # Extract R results
         v_r = dict(zip(result_r.rx2("V").names, result_r.rx2("V")))
         bcv_r = dict(zip(result_r.rx2("bcV").names, result_r.rx2("bcV")))
-        lambda_r = dict(
-            zip(result_r.rx2("lambda").names, result_r.rx2("lambda"))
-        )
+        lambda_r = dict(zip(result_r.rx2("lambda").names, result_r.rx2("lambda")))
         tau_r = dict(zip(result_r.rx2("tau").names, result_r.rx2("tau")))
 
         # Compare Cramer's V

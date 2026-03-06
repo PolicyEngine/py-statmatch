@@ -71,9 +71,7 @@ def bayesian_match(
     # Validate inputs
     if not all(var in data_rec.columns for var in match_vars):
         missing = [var for var in match_vars if var not in data_rec.columns]
-        raise ValueError(
-            f"Match variables {missing} not found in recipient data"
-        )
+        raise ValueError(f"Match variables {missing} not found in recipient data")
 
     if not all(var in data_don.columns for var in match_vars):
         missing = [var for var in match_vars if var not in data_don.columns]
@@ -109,9 +107,7 @@ def bayesian_match(
         posterior_samples = _sample_posterior(z_values, weights, n_samples)
         point_estimates = np.sum(weights * z_values, axis=1)
 
-        lower, upper, _ = credible_interval(
-            posterior_samples, level=credible_level
-        )
+        lower, upper, _ = credible_interval(posterior_samples, level=credible_level)
     else:
         posterior_samples = {}
         point_estimates = {}
@@ -120,14 +116,10 @@ def bayesian_match(
 
         for z_var in z_vars:
             z_values = data_don[z_var].values.astype(float)
-            posterior_samples[z_var] = _sample_posterior(
-                z_values, weights, n_samples
-            )
+            posterior_samples[z_var] = _sample_posterior(z_values, weights, n_samples)
             point_estimates[z_var] = np.sum(weights * z_values, axis=1)
 
-            l, u, _ = credible_interval(
-                posterior_samples[z_var], level=credible_level
-            )
+            l, u, _ = credible_interval(posterior_samples[z_var], level=credible_level)
             lower[z_var] = l
             upper[z_var] = u
 
@@ -205,9 +197,7 @@ def posterior_predictive(
         samples = {}
         for z_var in z_vars:
             z_values = donor_data[z_var].values.astype(float)
-            samples[z_var] = _sample_posterior(
-                z_values, weights, n_samples, method
-            )
+            samples[z_var] = _sample_posterior(z_values, weights, n_samples, method)
         return samples
 
 
@@ -308,9 +298,7 @@ def cia_posterior_test(
         partial_corrs = []
         for i in range(Y_resid.shape[1]):
             for j in range(Z_resid.shape[1]):
-                corr = _weighted_correlation(
-                    Y_resid[:, i], Z_resid[:, j], weights
-                )
+                corr = _weighted_correlation(Y_resid[:, i], Z_resid[:, j], weights)
                 partial_corrs.append(abs(corr))
 
         # Check if all partial correlations are below threshold
@@ -448,9 +436,7 @@ def _sample_posterior(
     if method == "gaussian":
         # Gaussian approximation using weighted moments
         means = np.sum(weights * z_values, axis=1)
-        variances = np.sum(
-            weights * (z_values - means.reshape(-1, 1)) ** 2, axis=1
-        )
+        variances = np.sum(weights * (z_values - means.reshape(-1, 1)) ** 2, axis=1)
         stds = np.sqrt(variances)
 
         samples = np.zeros((n_rec, n_samples))
@@ -465,9 +451,7 @@ def _sample_posterior(
             # Sample with Bayesian bootstrap perturbation
             for s in range(n_samples):
                 # Perturb weights using Dirichlet
-                perturbed_weights = weights[i] * np.random.exponential(
-                    1, n_don
-                )
+                perturbed_weights = weights[i] * np.random.exponential(1, n_don)
                 perturbed_weights /= perturbed_weights.sum()
 
                 # Sample a donor according to perturbed weights

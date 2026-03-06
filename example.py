@@ -12,15 +12,9 @@ donor_data = pd.DataFrame(
         "age": np.random.normal(40, 10, n_donors),
         "income": np.random.normal(50000, 20000, n_donors),
         "education_years": np.random.normal(14, 3, n_donors),
-        "region": np.random.choice(
-            ["North", "South", "East", "West"], n_donors
-        ),
-        "job_satisfaction": np.random.randint(
-            1, 11, n_donors
-        ),  # Variable to donate
-        "health_score": np.random.randint(
-            1, 101, n_donors
-        ),  # Variable to donate
+        "region": np.random.choice(["North", "South", "East", "West"], n_donors),
+        "job_satisfaction": np.random.randint(1, 11, n_donors),  # Variable to donate
+        "health_score": np.random.randint(1, 101, n_donors),  # Variable to donate
     }
 )
 
@@ -31,9 +25,7 @@ recipient_data = pd.DataFrame(
         "age": np.random.normal(38, 12, n_recipients),
         "income": np.random.normal(48000, 18000, n_recipients),
         "education_years": np.random.normal(13, 3, n_recipients),
-        "region": np.random.choice(
-            ["North", "South", "East", "West"], n_recipients
-        ),
+        "region": np.random.choice(["North", "South", "East", "West"], n_recipients),
     }
 )
 
@@ -57,9 +49,7 @@ result = nnd_hotdeck(
 
 print("\nMatching complete!")
 print(f"Average distance: {result['dist.rd'].mean():.2f}")
-print(
-    f"Distance range: [{result['dist.rd'].min():.2f}, {result['dist.rd'].max():.2f}]"
-)
+print(f"Distance range: [{result['dist.rd'].min():.2f}, {result['dist.rd'].max():.2f}]")
 
 # Create fused dataset
 fused_data = recipient_data.copy()
@@ -83,12 +73,8 @@ for region in ["North", "South", "East", "West"]:
     if len(region_data) > 0:
         print(f"\n{region}:")
         print(f"  Recipients: {len(region_data)}")
-        print(
-            f"  Avg match distance: {region_data['match_distance'].mean():.2f}"
-        )
-        print(
-            f"  Avg job satisfaction: {region_data['job_satisfaction'].mean():.1f}"
-        )
+        print(f"  Avg match distance: {region_data['match_distance'].mean():.2f}")
+        print(f"  Avg job satisfaction: {region_data['job_satisfaction'].mean():.1f}")
         print(f"  Avg health score: {region_data['health_score'].mean():.1f}")
 
 # Example with constrained matching
@@ -107,6 +93,4 @@ result_constrained = nnd_hotdeck(
 donor_usage = pd.Series(result_constrained["noad.index"]).value_counts()
 print(f"\nMax donor usage: {donor_usage.max()}")
 print(f"Number of unique donors used: {len(donor_usage)}")
-print(
-    f"Average distance (constrained): {result_constrained['dist.rd'].mean():.2f}"
-)
+print(f"Average distance (constrained): {result_constrained['dist.rd'].mean():.2f}")

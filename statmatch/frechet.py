@@ -642,7 +642,7 @@ def fbwidths_by_x(
 
     for r in range(1, n_x + 1):
         for subset in combinations(x_indices, r):
-            subset_name = "|" + "*".join([f"X{i+1}" for i in subset])
+            subset_name = "|" + "*".join([f"X{i + 1}" for i in subset])
 
             # Marginalize tables to the subset of X variables
             # Keep dimensions in subset, sum over the rest
@@ -672,9 +672,7 @@ def fbwidths_by_x(
             # Cohen's effect size
             p_obs = tab_x_sub / tab_x_sub.sum()
             uniform_p = 1 / x_cells
-            cohen_ef = np.sqrt(
-                x_cells * np.sum((p_obs.flatten() - uniform_p) ** 2)
-            )
+            cohen_ef = np.sqrt(x_cells * np.sum((p_obs.flatten() - uniform_p) ** 2))
 
             # Compute bounds if not too sparse
             if av_n <= 1 and deal_sparse == "discard":
