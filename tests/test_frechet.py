@@ -28,17 +28,13 @@ class TestPBayes:
     def simple_table(self):
         """Create a simple contingency table for testing."""
         # 3x4 contingency table
-        table = np.array(
-            [[10, 5, 3, 2], [8, 12, 4, 1], [5, 8, 15, 7]]
-        )
+        table = np.array([[10, 5, 3, 2], [8, 12, 4, 1], [5, 8, 15, 7]])
         return table
 
     @pytest.fixture
     def sparse_table(self):
         """Create a sparse contingency table with zeros."""
-        table = np.array(
-            [[10, 0, 3, 0], [0, 12, 0, 1], [5, 0, 15, 0]]
-        )
+        table = np.array([[10, 0, 3, 0], [0, 12, 0, 1], [5, 0, 15, 0]])
         return table
 
     def test_jeffreys_method(self, simple_table):
@@ -193,9 +189,7 @@ class TestPBayes:
         # Compare K values (allow some tolerance as estimation methods may differ)
         info_r_vec = result_r.rx2("info")
         info_r = dict(zip(info_r_vec.names, list(info_r_vec)))
-        np.testing.assert_allclose(
-            result_py["info"]["K"], float(info_r["K"]), rtol=0.2
-        )
+        np.testing.assert_allclose(result_py["info"]["K"], float(info_r["K"]), rtol=0.2)
 
         # Compare pseudoB estimates (allow more tolerance due to K differences)
         pseudoB_r = np.array(result_r.rx2("pseudoB"))
@@ -219,9 +213,7 @@ class TestFrechetBoundsCat:
         tab_xy = np.array([[[15, 15], [10, 10]], [[12, 13], [12, 13]]])
 
         # tab.xz: 2x2x3 table for X vs Z
-        tab_xz = np.array(
-            [[[10, 10, 10], [7, 7, 6]], [[8, 9, 8], [8, 9, 8]]]
-        )
+        tab_xz = np.array([[[10, 10, 10], [7, 7, 6]], [[8, 9, 8], [8, 9, 8]]])
 
         return tab_x, tab_xy, tab_xz
 
@@ -307,29 +299,29 @@ class TestFrechetBoundsCat:
         from statmatch.frechet import frechet_bounds_cat
 
         # Use R's quine dataset
-        ro.r('library(MASS)')
-        ro.r('data(quine)')
+        ro.r("library(MASS)")
+        ro.r("data(quine)")
         ro.r('suppressWarnings(RNGversion("3.5.0"))')
-        ro.r('set.seed(7654)')
-        ro.r('lab.A <- sample(nrow(quine), 70, replace=TRUE)')
-        ro.r('quine.A <- quine[lab.A, 1:4]')
-        ro.r('quine.B <- quine[-lab.A, c(1:3, 5)]')
+        ro.r("set.seed(7654)")
+        ro.r("lab.A <- sample(nrow(quine), 70, replace=TRUE)")
+        ro.r("quine.A <- quine[lab.A, 1:4]")
+        ro.r("quine.B <- quine[-lab.A, c(1:3, 5)]")
 
-        ro.r('tab.x <- xtabs(~Eth+Sex, data=quine)')
-        ro.r('tab.xy <- xtabs(~Eth+Sex+Lrn, data=quine.A)')
-        ro.r('tab.xz <- xtabs(~Eth+Sex+Days, data=quine.B)')
+        ro.r("tab.x <- xtabs(~Eth+Sex, data=quine)")
+        ro.r("tab.xy <- xtabs(~Eth+Sex+Lrn, data=quine.A)")
+        ro.r("tab.xz <- xtabs(~Eth+Sex+Days, data=quine.B)")
 
         # Get R results
-        result_r = ro.r('''
+        result_r = ro.r("""
             suppressWarnings(
                 Frechet.bounds.cat(tab.x, tab.xy, tab.xz, print.f="tables")
             )
-        ''')
+        """)
 
         # Extract tables from R
-        tab_x = np.array(ro.r('tab.x'))
-        tab_xy = np.array(ro.r('tab.xy'))
-        tab_xz = np.array(ro.r('tab.xz'))
+        tab_x = np.array(ro.r("tab.x"))
+        tab_xy = np.array(ro.r("tab.xy"))
+        tab_xz = np.array(ro.r("tab.xz"))
 
         # Python implementation
         result_py = frechet_bounds_cat(tab_x, tab_xy, tab_xz, print_f="tables")
@@ -358,9 +350,7 @@ class TestFbwidthsByX:
         tab_xy = np.array([[[15, 15], [10, 10]], [[12, 13], [12, 13]]])
 
         # 2x2x3 table for X1 x X2 x Z
-        tab_xz = np.array(
-            [[[10, 10, 10], [7, 7, 6]], [[8, 9, 8], [8, 9, 8]]]
-        )
+        tab_xz = np.array([[[10, 10, 10], [7, 7, 6]], [[8, 9, 8], [8, 9, 8]]])
 
         return tab_x, tab_xy, tab_xz
 
@@ -426,15 +416,11 @@ class TestFbwidthsByX:
         tab_x, tab_xy, tab_xz = test_tables
 
         # Test with discard option
-        result_discard = fbwidths_by_x(
-            tab_x, tab_xy, tab_xz, deal_sparse="discard"
-        )
+        result_discard = fbwidths_by_x(tab_x, tab_xy, tab_xz, deal_sparse="discard")
         assert "sum.unc" in result_discard
 
         # Test with relfreq option
-        result_relfreq = fbwidths_by_x(
-            tab_x, tab_xy, tab_xz, deal_sparse="relfreq"
-        )
+        result_relfreq = fbwidths_by_x(tab_x, tab_xy, tab_xz, deal_sparse="relfreq")
         assert "sum.unc" in result_relfreq
 
     @pytest.mark.skipif(not R_AVAILABLE, reason="R/rpy2 not available")
@@ -443,32 +429,32 @@ class TestFbwidthsByX:
         from statmatch.frechet import fbwidths_by_x
 
         # Use R's quine dataset with simplified Z variable
-        ro.r('library(MASS)')
-        ro.r('data(quine)')
-        ro.r('quine$c.Days <- cut(quine$Days, c(-1, seq(0,50,10),100))')
+        ro.r("library(MASS)")
+        ro.r("data(quine)")
+        ro.r("quine$c.Days <- cut(quine$Days, c(-1, seq(0,50,10),100))")
         ro.r('suppressWarnings(RNGversion("3.5.0"))')
-        ro.r('set.seed(4567)')
-        ro.r('lab.A <- sample(nrow(quine), 70, replace=TRUE)')
-        ro.r('quine.A <- quine[lab.A, 1:4]')
-        ro.r('quine.B <- quine[-lab.A, c(1:3, 6)]')
+        ro.r("set.seed(4567)")
+        ro.r("lab.A <- sample(nrow(quine), 70, replace=TRUE)")
+        ro.r("quine.A <- quine[lab.A, 1:4]")
+        ro.r("quine.B <- quine[-lab.A, c(1:3, 6)]")
 
-        ro.r('freq.xA <- xtabs(~Eth+Sex, data=quine.A)')
-        ro.r('freq.xB <- xtabs(~Eth+Sex, data=quine.B)')
-        ro.r('freq.xy <- xtabs(~Eth+Sex+Lrn, data=quine.A)')
-        ro.r('freq.xz <- xtabs(~Eth+Sex+c.Days, data=quine.B)')
+        ro.r("freq.xA <- xtabs(~Eth+Sex, data=quine.A)")
+        ro.r("freq.xB <- xtabs(~Eth+Sex, data=quine.B)")
+        ro.r("freq.xy <- xtabs(~Eth+Sex+Lrn, data=quine.A)")
+        ro.r("freq.xz <- xtabs(~Eth+Sex+c.Days, data=quine.B)")
 
         # R implementation
-        result_r = ro.r('''
+        result_r = ro.r("""
             suppressWarnings(
                 Fbwidths.by.x(tab.x=freq.xA+freq.xB, tab.xy=freq.xy,
                     tab.xz=freq.xz)
             )
-        ''')
+        """)
 
         # Extract tables
-        tab_x = np.array(ro.r('freq.xA + freq.xB'))
-        tab_xy = np.array(ro.r('freq.xy'))
-        tab_xz = np.array(ro.r('freq.xz'))
+        tab_x = np.array(ro.r("freq.xA + freq.xB"))
+        tab_xy = np.array(ro.r("freq.xy"))
+        tab_xz = np.array(ro.r("freq.xz"))
 
         # Python implementation
         result_py = fbwidths_by_x(tab_x, tab_xy, tab_xz)

@@ -239,9 +239,7 @@ def _compute_summary(x: np.ndarray, w: Optional[np.ndarray]) -> List[float]:
         ]
 
 
-def _hist_breaks(
-    x: np.ndarray, w: Optional[np.ndarray], n: float
-) -> np.ndarray:
+def _hist_breaks(x: np.ndarray, w: Optional[np.ndarray], n: float) -> np.ndarray:
     """Compute histogram breaks using Freedman-Diaconis rule."""
     xx = x[~np.isnan(x)]
 
@@ -511,9 +509,7 @@ def pw_assoc(
     return results
 
 
-def _weighted_crosstab(
-    y: pd.Series, x: pd.Series, w: np.ndarray
-) -> pd.DataFrame:
+def _weighted_crosstab(y: pd.Series, x: pd.Series, w: np.ndarray) -> pd.DataFrame:
     """Compute weighted cross-tabulation."""
     y_cats = y.unique()
     x_cats = x.unique()

@@ -185,9 +185,7 @@ def plot_bounds(
     ax.set_ylabel("Relative Frequency")
 
     if has_x:
-        ax.set_title(
-            "Frechet Bounds (dotted: unconditional, solid: conditional on X)"
-        )
+        ax.set_title("Frechet Bounds (dotted: unconditional, solid: conditional on X)")
         # Add legend
         legend_elements = [
             Line2D([0], [0], linestyle=":", color="k", label="Unconditional"),
@@ -574,19 +572,11 @@ def plot_tab(
     if len(xlab_a) > 1:
         # Multiple variables - create combined labels
         df_a["x"] = [
-            (
-                "*".join(str(v) for v in idx)
-                if isinstance(idx, tuple)
-                else str(idx)
-            )
+            ("*".join(str(v) for v in idx) if isinstance(idx, tuple) else str(idx))
             for idx in df_a.index
         ]
         df_b["x"] = [
-            (
-                "*".join(str(v) for v in idx)
-                if isinstance(idx, tuple)
-                else str(idx)
-            )
+            ("*".join(str(v) for v in idx) if isinstance(idx, tuple) else str(idx))
             for idx in df_b.index
         ]
     else:

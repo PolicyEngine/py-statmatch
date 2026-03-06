@@ -375,9 +375,7 @@ class TestMixedMtc:
         from statmatch.mixed_mtc import mixed_mtc
 
         # More recipients than donors
-        donor_data = pd.DataFrame(
-            {"x1": [1, 2, 3], "x2": [1, 2, 3], "z": [1, 2, 3]}
-        )
+        donor_data = pd.DataFrame({"x1": [1, 2, 3], "x2": [1, 2, 3], "z": [1, 2, 3]})
         recipient_data = pd.DataFrame(
             {
                 "x1": [1, 2, 3, 4, 5],
@@ -453,9 +451,7 @@ class TestSelMtcByUnc:
         tab_x, tab_xy, tab_xz = sample_contingency_tables
 
         # Python implementation
-        result_py = sel_mtc_by_unc(
-            tab_x=tab_x, tab_xy=tab_xy, tab_xz=tab_xz, corr_d=2
-        )
+        result_py = sel_mtc_by_unc(tab_x=tab_x, tab_xy=tab_xy, tab_xz=tab_xz, corr_d=2)
 
         # For R comparison, we need to create the tables in R format
         # This is complex due to multi-index tables
@@ -472,9 +468,7 @@ class TestSelMtcByUnc:
 
         tab_x, tab_xy, tab_xz = sample_contingency_tables
 
-        result = sel_mtc_by_unc(
-            tab_x=tab_x, tab_xy=tab_xy, tab_xz=tab_xz, corr_d=2
-        )
+        result = sel_mtc_by_unc(tab_x=tab_x, tab_xy=tab_xy, tab_xz=tab_xz, corr_d=2)
 
         # Check required outputs
         assert "ini.ord" in result

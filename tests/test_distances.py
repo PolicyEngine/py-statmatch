@@ -163,9 +163,7 @@ class TestGowerDist:
             data_x_r = ro.conversion.py2rpy(data_x)
             data_y_r = ro.conversion.py2rpy(data_y)
             result_r = np.array(
-                statmatch_r.gower_dist(
-                    data_x_r, data_y_r, rngs=ro.FloatVector(rngs)
-                )
+                statmatch_r.gower_dist(data_x_r, data_y_r, rngs=ro.FloatVector(rngs))
             )
 
         np.testing.assert_allclose(
@@ -227,9 +225,7 @@ class TestGowerDist:
         np.testing.assert_allclose(result, result.T, rtol=1e-10, atol=1e-10)
 
         # Check diagonal is zero
-        np.testing.assert_allclose(
-            np.diag(result), np.zeros(len(data_x)), atol=1e-10
-        )
+        np.testing.assert_allclose(np.diag(result), np.zeros(len(data_x)), atol=1e-10)
 
 
 class TestMahalanobisDist:
@@ -269,9 +265,7 @@ class TestMahalanobisDist:
         with localconverter(ro.default_converter + pandas2ri.converter):
             data_x_r = ro.conversion.py2rpy(data_x)
             data_y_r = ro.conversion.py2rpy(data_y)
-            result_r = np.array(
-                statmatch_r.mahalanobis_dist(data_x_r, data_y_r)
-            )
+            result_r = np.array(statmatch_r.mahalanobis_dist(data_x_r, data_y_r))
 
         np.testing.assert_allclose(
             result_py,
@@ -330,9 +324,7 @@ class TestMahalanobisDist:
             nrow=vc.shape[0],
             ncol=vc.shape[1],
         )
-        result_r = np.array(
-            statmatch_r.mahalanobis_dist(data_x_r, data_y_r, vc=vc_r)
-        )
+        result_r = np.array(statmatch_r.mahalanobis_dist(data_x_r, data_y_r, vc=vc_r))
 
         np.testing.assert_allclose(
             result_py,
@@ -363,9 +355,7 @@ class TestMahalanobisDist:
         result = mahalanobis_dist(data_x)
 
         # Check diagonal is zero
-        np.testing.assert_allclose(
-            np.diag(result), np.zeros(len(data_x)), atol=1e-10
-        )
+        np.testing.assert_allclose(np.diag(result), np.zeros(len(data_x)), atol=1e-10)
 
 
 class TestMaximumDist:
@@ -452,9 +442,7 @@ class TestMaximumDist:
         with localconverter(ro.default_converter + pandas2ri.converter):
             data_x_r = ro.conversion.py2rpy(data_x)
             data_y_r = ro.conversion.py2rpy(data_y)
-            result_r = np.array(
-                statmatch_r.maximum_dist(data_x_r, data_y_r, rank=True)
-            )
+            result_r = np.array(statmatch_r.maximum_dist(data_x_r, data_y_r, rank=True))
 
         np.testing.assert_allclose(
             result_py,
@@ -488,9 +476,7 @@ class TestMaximumDist:
         np.testing.assert_allclose(result, result.T, rtol=1e-10, atol=1e-10)
 
         # Check diagonal is zero
-        np.testing.assert_allclose(
-            np.diag(result), np.zeros(len(data_x)), atol=1e-10
-        )
+        np.testing.assert_allclose(np.diag(result), np.zeros(len(data_x)), atol=1e-10)
 
     def test_maximum_known_values(self):
         """Test maximum_dist with known values."""

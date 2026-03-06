@@ -47,9 +47,7 @@ class TestRANDHotdeck:
                 "x1": np.random.normal(0.5, 1, n_recipients),
                 "x2": np.random.normal(0.5, 2, n_recipients),
                 "x3": np.random.uniform(1, 11, n_recipients),
-                "donation_class": np.random.choice(
-                    ["A", "B", "C"], n_recipients
-                ),
+                "donation_class": np.random.choice(["A", "B", "C"], n_recipients),
             }
         )
 

@@ -201,9 +201,7 @@ class TestMatchDiagnostics:
         )
         balance = diag.balance_table()
         assert isinstance(balance, pd.DataFrame)
-        assert (
-            "smd_before" in balance.columns or "SMD Before" in balance.columns
-        )
+        assert "smd_before" in balance.columns or "SMD Before" in balance.columns
 
     def test_balance_table_has_all_match_vars(self, sample_match_data):
         """Test balance_table includes all matching variables."""

@@ -299,9 +299,7 @@ class TestCredibleInterval:
         n_recipients = 100
         n_samples = 2000
 
-        samples = np.random.normal(
-            true_mean, true_std, (n_recipients, n_samples)
-        )
+        samples = np.random.normal(true_mean, true_std, (n_recipients, n_samples))
 
         lower, upper, point = credible_interval(samples, level=0.95)
 
@@ -365,9 +363,7 @@ class TestCIAPosteriorTest:
         data = pd.DataFrame({"x": x, "y": y, "z": z})
         return data
 
-    def test_cia_posterior_returns_probability(
-        self, sample_data_with_correlations
-    ):
+    def test_cia_posterior_returns_probability(self, sample_data_with_correlations):
         """Test that CIA test returns posterior probability."""
         data = sample_data_with_correlations
 

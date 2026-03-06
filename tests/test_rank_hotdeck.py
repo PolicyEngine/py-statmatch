@@ -99,9 +99,7 @@ class TestRankNNDHotdeck:
         donor_data = donor_data.copy()
         recipient_data = recipient_data.copy()
         donor_data["weight"] = np.random.uniform(0.5, 2.0, len(donor_data))
-        recipient_data["weight"] = np.random.uniform(
-            0.5, 2.0, len(recipient_data)
-        )
+        recipient_data["weight"] = np.random.uniform(0.5, 2.0, len(recipient_data))
 
         from statmatch.rank_hotdeck import rank_nnd_hotdeck
 
@@ -213,9 +211,9 @@ class TestRankNNDHotdeck:
 
         # For constrained matching, total distance should be similar
         # (exact match may differ due to different tie-breaking)
-        assert (
-            abs(np.sum(result_py["dist.rd"]) - np.sum(dist_rd_r)) < 1e-5
-        ), "Constrained matching total distance mismatch"
+        assert abs(np.sum(result_py["dist.rd"]) - np.sum(dist_rd_r)) < 1e-5, (
+            "Constrained matching total distance mismatch"
+        )
 
     def test_basic_matching_output_structure(self, sample_data):
         """Test that output has correct structure."""
@@ -312,8 +310,7 @@ class TestRankNNDHotdeck:
         donor_ids = result["mtc.ids"]["don.id"].values
         unique_donors = len(np.unique(donor_ids))
         assert unique_donors == len(recipient_data), (
-            f"Expected {len(recipient_data)} unique donors, "
-            f"got {unique_donors}"
+            f"Expected {len(recipient_data)} unique donors, got {unique_donors}"
         )
 
     def test_single_variable_matching(self):

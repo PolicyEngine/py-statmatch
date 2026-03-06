@@ -91,18 +91,14 @@ def gower_dist(
             if _is_numeric(data_x[col]) and _is_numeric(data_y[col]):
                 if robcb is not None:
                     # Robust range computation
-                    combined = np.concatenate(
-                        [data_x[col].values, data_y[col].values]
-                    )
+                    combined = np.concatenate([data_x[col].values, data_y[col].values])
                     combined = combined[~np.isnan(combined)]
                     if robcb == "boxp":
                         q1, q3 = np.percentile(combined, [25, 75])
                         iqr = q3 - q1
                         lower = q1 - 1.5 * iqr
                         upper = q3 + 1.5 * iqr
-                        trimmed = combined[
-                            (combined >= lower) & (combined <= upper)
-                        ]
+                        trimmed = combined[(combined >= lower) & (combined <= upper)]
                         if len(trimmed) > 0:
                             rngs.append(trimmed.max() - trimmed.min())
                         else:
@@ -113,17 +109,13 @@ def gower_dist(
                         iqr = q3 - q1
                         lower = q1 - 1.5 * iqr
                         upper = q3 + 1.5 * iqr
-                        trimmed = combined[
-                            (combined >= lower) & (combined <= upper)
-                        ]
+                        trimmed = combined[(combined >= lower) & (combined <= upper)]
                         if len(trimmed) > 0:
                             rngs.append(trimmed.max() - trimmed.min())
                         else:
                             rngs.append(combined.max() - combined.min())
                 else:
-                    combined = np.concatenate(
-                        [data_x[col].values, data_y[col].values]
-                    )
+                    combined = np.concatenate([data_x[col].values, data_y[col].values])
                     combined = combined[~np.isnan(combined)]
                     if len(combined) > 0:
                         rngs.append(combined.max() - combined.min())

@@ -215,16 +215,12 @@ class TestReplicateVariance:
         def mean_statistic(df, w):
             return np.average(df["x"], weights=w)
 
-        variance = replicate_variance(
-            data, weights, mean_statistic, method="jackknife"
-        )
+        variance = replicate_variance(data, weights, mean_statistic, method="jackknife")
 
         assert variance > 0, "Variance should be positive"
         # Variance of mean should be approximately var(x)/n
         expected_approx = np.var(data["x"]) / len(data)
-        assert (
-            variance < expected_approx * 10
-        ), "Variance is unreasonably large"
+        assert variance < expected_approx * 10, "Variance is unreasonably large"
 
     def test_bootstrap_variance(self, sample_data):
         """Test bootstrap variance estimation."""
@@ -244,9 +240,7 @@ class TestReplicateVariance:
         data, weights = sample_data
 
         def ratio_statistic(df, w):
-            return np.average(df["x"], weights=w) / np.average(
-                df["y"], weights=w
-            )
+            return np.average(df["x"], weights=w) / np.average(df["y"], weights=w)
 
         variance = replicate_variance(
             data, weights, ratio_statistic, method="jackknife"
@@ -289,9 +283,7 @@ class TestWeightedMatching:
 
     def test_weighted_matching_basic(self, weighted_sample_data):
         """Test that weighted matching runs without error."""
-        donor_data, recipient_data, don_weights, rec_weights = (
-            weighted_sample_data
-        )
+        donor_data, recipient_data, don_weights, rec_weights = weighted_sample_data
 
         result = nnd_hotdeck(
             data_rec=recipient_data,

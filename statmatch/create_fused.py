@@ -85,24 +85,18 @@ def create_fused(
     """
     # Validate dup_x and match_vars
     if dup_x and match_vars is None:
-        raise ValueError(
-            "match_vars must be specified when dup_x=True"
-        )
+        raise ValueError("match_vars must be specified when dup_x=True")
 
     # Validate z_vars exist in donor data
     missing_z = [v for v in z_vars if v not in data_don.columns]
     if missing_z:
-        raise ValueError(
-            f"Variables {missing_z} not found in donor data"
-        )
+        raise ValueError(f"Variables {missing_z} not found in donor data")
 
     # Validate match_vars exist in donor data if specified
     if match_vars is not None:
         missing_m = [v for v in match_vars if v not in data_don.columns]
         if missing_m:
-            raise ValueError(
-                f"Match variables {missing_m} not found in donor data"
-            )
+            raise ValueError(f"Match variables {missing_m} not found in donor data")
 
     # Start with a copy of the recipient data
     result = data_rec.copy()

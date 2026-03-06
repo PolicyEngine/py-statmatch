@@ -633,9 +633,7 @@ class MatchDiagnostics:
         html_parts.append("<!DOCTYPE html>")
         html_parts.append("<html>")
         html_parts.append("<head>")
-        html_parts.append(
-            "<title>Statistical Matching Diagnostics Report</title>"
-        )
+        html_parts.append("<title>Statistical Matching Diagnostics Report</title>")
         html_parts.append("<style>")
         html_parts.append(
             """
@@ -687,28 +685,22 @@ class MatchDiagnostics:
         # Overview metrics
         html_parts.append("<h2>Overview</h2>")
         html_parts.append('<div class="metric-box">')
-        html_parts.append(
-            f'<div class="metric-value">{metrics["n_recipients"]}</div>'
-        )
+        html_parts.append(f'<div class="metric-value">{metrics["n_recipients"]}</div>')
         html_parts.append('<div class="metric-label">Recipients</div>')
         html_parts.append("</div>")
         html_parts.append('<div class="metric-box">')
-        html_parts.append(
-            f'<div class="metric-value">{metrics["n_donors"]}</div>'
-        )
+        html_parts.append(f'<div class="metric-value">{metrics["n_donors"]}</div>')
         html_parts.append('<div class="metric-label">Donors</div>')
         html_parts.append("</div>")
         html_parts.append('<div class="metric-box">')
         html_parts.append(
-            f'<div class="metric-value">'
-            f'{metrics["donor_usage"]["unique_donors"]}</div>'
+            f'<div class="metric-value">{metrics["donor_usage"]["unique_donors"]}</div>'
         )
         html_parts.append('<div class="metric-label">Donors Used</div>')
         html_parts.append("</div>")
         html_parts.append('<div class="metric-box">')
         html_parts.append(
-            f'<div class="metric-value">'
-            f'{metrics["distances"]["mean"]:.4f}</div>'
+            f'<div class="metric-value">{metrics["distances"]["mean"]:.4f}</div>'
         )
         html_parts.append('<div class="metric-label">Mean Distance</div>')
         html_parts.append("</div>")
@@ -754,9 +746,7 @@ class MatchDiagnostics:
         html_parts.append("<table>")
         html_parts.append("<tr><th>Metric</th><th>Value</th></tr>")
         for key, val in metrics["distances"].items():
-            html_parts.append(
-                f"<tr><td>{key.title()}</td><td>{val:.6f}</td></tr>"
-            )
+            html_parts.append(f"<tr><td>{key.title()}</td><td>{val:.6f}</td></tr>")
         html_parts.append("</table>")
 
         # Donor usage
@@ -772,7 +762,7 @@ class MatchDiagnostics:
         )
         html_parts.append(
             f"<tr><td>Utilization Rate</td>"
-            f"<td>{100*metrics['donor_usage']['utilization_rate']:.1f}%</td></tr>"
+            f"<td>{100 * metrics['donor_usage']['utilization_rate']:.1f}%</td></tr>"
         )
         html_parts.append(
             f"<tr><td>Max Uses per Donor</td>"

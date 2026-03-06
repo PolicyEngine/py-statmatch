@@ -27,10 +27,7 @@ class TestFact2Dummy:
         from statmatch.sample_utils import fact2dummy
 
         # Create a factor-like pandas Series
-        data = pd.Series(
-            pd.Categorical(["a", "b", "a", "c", "b"]),
-            name="x"
-        )
+        data = pd.Series(pd.Categorical(["a", "b", "a", "c", "b"]), name="x")
 
         result = fact2dummy(data)
 
@@ -51,10 +48,7 @@ class TestFact2Dummy:
         """Test converting a single factor dropping the last level."""
         from statmatch.sample_utils import fact2dummy
 
-        data = pd.Series(
-            pd.Categorical(["a", "b", "a", "c", "b"]),
-            name="x"
-        )
+        data = pd.Series(pd.Categorical(["a", "b", "a", "c", "b"]), name="x")
 
         result = fact2dummy(data, all_levels=False)
 
@@ -68,13 +62,17 @@ class TestFact2Dummy:
         """Test converting a DataFrame with mixed numeric and categorical."""
         from statmatch.sample_utils import fact2dummy
 
-        df = pd.DataFrame({
-            "x": [1.0, 2.0, 3.0, 4.0, 5.0],
-            "y": pd.Categorical([1, 2, 1, 2, 2]),
-            "z": pd.Categorical(["low", "med", "high", "med", "med"],
-                               categories=["low", "med", "high"],
-                               ordered=True)
-        })
+        df = pd.DataFrame(
+            {
+                "x": [1.0, 2.0, 3.0, 4.0, 5.0],
+                "y": pd.Categorical([1, 2, 1, 2, 2]),
+                "z": pd.Categorical(
+                    ["low", "med", "high", "med", "med"],
+                    categories=["low", "med", "high"],
+                    ordered=True,
+                ),
+            }
+        )
 
         result = fact2dummy(df)
 
@@ -94,10 +92,7 @@ class TestFact2Dummy:
         """Test handling of missing values in factors."""
         from statmatch.sample_utils import fact2dummy
 
-        data = pd.Series(
-            pd.Categorical(["a", "b", None, "c", "b"]),
-            name="x"
-        )
+        data = pd.Series(pd.Categorical(["a", "b", None, "c", "b"]), name="x")
 
         result = fact2dummy(data)
 
@@ -112,13 +107,17 @@ class TestFact2Dummy:
         from statmatch.sample_utils import fact2dummy
 
         # Create test data
-        df = pd.DataFrame({
-            "x": [1.5, 2.3, 0.8, 4.1, 3.2],
-            "y": pd.Categorical([1, 2, 1, 2, 2]),
-            "z": pd.Categorical(["low", "med", "high", "med", "low"],
-                               categories=["high", "low", "med"],
-                               ordered=True)
-        })
+        df = pd.DataFrame(
+            {
+                "x": [1.5, 2.3, 0.8, 4.1, 3.2],
+                "y": pd.Categorical([1, 2, 1, 2, 2]),
+                "z": pd.Categorical(
+                    ["low", "med", "high", "med", "low"],
+                    categories=["high", "low", "med"],
+                    ordered=True,
+                ),
+            }
+        )
 
         # Python implementation
         result_py = fact2dummy(df)
@@ -126,13 +125,13 @@ class TestFact2Dummy:
         # R implementation
         with localconverter(ro.default_converter + pandas2ri.converter):
             # In R, we need to create factors explicitly
-            ro.r('''
+            ro.r("""
             x <- c(1.5, 2.3, 0.8, 4.1, 3.2)
             y <- factor(c(1, 2, 1, 2, 2))
             z <- ordered(c("low", "med", "high", "med", "low"),
                         levels=c("high", "low", "med"))
             xyz <- data.frame(x, y, z)
-            ''')
+            """)
             result_r = statmatch_r.fact2dummy(ro.r["xyz"])
             result_r_df = ro.conversion.rpy2py(result_r)
 
@@ -148,9 +147,7 @@ class TestFact2Dummy:
         for col in result_py.columns:
             if col in result_r_df.columns:
                 np.testing.assert_array_almost_equal(
-                    result_py[col].values,
-                    result_r_df[col].values,
-                    decimal=10
+                    result_py[col].values, result_r_df[col].values, decimal=10
                 )
 
 
@@ -164,33 +161,35 @@ class TestHarmonizeX:
 
         # Survey A data
         n_a = 100
-        survey_a = pd.DataFrame({
-            "sex": pd.Categorical(
-                np.random.choice(["M", "F"], n_a),
-                categories=["F", "M"]
-            ),
-            "age_group": pd.Categorical(
-                np.random.choice(["young", "mid", "old"], n_a),
-                categories=["young", "mid", "old"]
-            ),
-            "income": np.random.normal(50000, 15000, n_a),
-            "weight": np.random.uniform(1.0, 2.0, n_a)
-        })
+        survey_a = pd.DataFrame(
+            {
+                "sex": pd.Categorical(
+                    np.random.choice(["M", "F"], n_a), categories=["F", "M"]
+                ),
+                "age_group": pd.Categorical(
+                    np.random.choice(["young", "mid", "old"], n_a),
+                    categories=["young", "mid", "old"],
+                ),
+                "income": np.random.normal(50000, 15000, n_a),
+                "weight": np.random.uniform(1.0, 2.0, n_a),
+            }
+        )
 
         # Survey B data
         n_b = 120
-        survey_b = pd.DataFrame({
-            "sex": pd.Categorical(
-                np.random.choice(["M", "F"], n_b),
-                categories=["F", "M"]
-            ),
-            "age_group": pd.Categorical(
-                np.random.choice(["young", "mid", "old"], n_b),
-                categories=["young", "mid", "old"]
-            ),
-            "expenditure": np.random.normal(40000, 10000, n_b),
-            "weight": np.random.uniform(0.8, 1.8, n_b)
-        })
+        survey_b = pd.DataFrame(
+            {
+                "sex": pd.Categorical(
+                    np.random.choice(["M", "F"], n_b), categories=["F", "M"]
+                ),
+                "age_group": pd.Categorical(
+                    np.random.choice(["young", "mid", "old"], n_b),
+                    categories=["young", "mid", "old"],
+                ),
+                "expenditure": np.random.normal(40000, 10000, n_b),
+                "weight": np.random.uniform(0.8, 1.8, n_b),
+            }
+        )
 
         return survey_a, survey_b
 
@@ -205,7 +204,7 @@ class TestHarmonizeX:
             svy_b=survey_b,
             x_vars=["sex", "age_group"],
             weight_a="weight",
-            weight_b="weight"
+            weight_b="weight",
         )
 
         # Check output structure
@@ -232,7 +231,7 @@ class TestHarmonizeX:
             x_vars=["sex", "age_group"],
             weight_a="weight",
             weight_b="weight",
-            joint=True  # Consider joint distribution
+            joint=True,  # Consider joint distribution
         )
 
         # Verify that weighted totals match after harmonization
@@ -255,15 +254,12 @@ class TestHarmonizeX:
             x_vars=["sex"],
             weight_a="weight",
             weight_b="weight",
-            x_tot=x_tot
+            x_tot=x_tot,
         )
 
         # Check that harmonized weights sum to population totals
         weighted_totals_a = pd.crosstab(
-            survey_a["sex"],
-            columns="count",
-            values=result["weights_a"],
-            aggfunc="sum"
+            survey_a["sex"], columns="count", values=result["weights_a"], aggfunc="sum"
         )
         # Weighted totals should approximate known totals
         assert "weights_a" in result
@@ -282,7 +278,7 @@ class TestHarmonizeX:
             x_vars=["sex", "age_group"],
             weight_a="weight",
             weight_b="weight",
-            cal_method="linear"
+            cal_method="linear",
         )
 
         # R implementation
@@ -294,14 +290,14 @@ class TestHarmonizeX:
             ro.r.assign("survey_a", survey_a_r)
             ro.r.assign("survey_b", survey_b_r)
 
-            ro.r('''
+            ro.r("""
             library(survey)
             survey_a$fpc <- nrow(survey_a) / 1000
             survey_b$fpc <- nrow(survey_b) / 1000
             svy_a <- svydesign(~1, weights=~weight, data=survey_a)
             svy_b <- svydesign(~1, weights=~weight, data=survey_b)
             result_r <- harmonize.x(svy_a, svy_b, form.x=~sex+age_group)
-            ''')
+            """)
 
             weights_a_r = np.array(ro.r("result_r$weights.A"))
             weights_b_r = np.array(ro.r("result_r$weights.B"))
@@ -311,7 +307,7 @@ class TestHarmonizeX:
             result_py["weights_a"],
             weights_a_r,
             rtol=0.01,  # 1% relative tolerance
-            atol=0.1
+            atol=0.1,
         )
 
 
@@ -325,39 +321,41 @@ class TestCombSamples:
 
         # Survey A: has X variables and Y
         n_a = 80
-        survey_a = pd.DataFrame({
-            "sex": pd.Categorical(
-                np.random.choice(["M", "F"], n_a),
-                categories=["F", "M"]
-            ),
-            "age_group": pd.Categorical(
-                np.random.choice(["young", "mid", "old"], n_a),
-                categories=["young", "mid", "old"]
-            ),
-            "education": pd.Categorical(  # Y variable
-                np.random.choice(["low", "mid", "high"], n_a),
-                categories=["low", "mid", "high"]
-            ),
-            "weight": np.random.uniform(1.0, 2.0, n_a)
-        })
+        survey_a = pd.DataFrame(
+            {
+                "sex": pd.Categorical(
+                    np.random.choice(["M", "F"], n_a), categories=["F", "M"]
+                ),
+                "age_group": pd.Categorical(
+                    np.random.choice(["young", "mid", "old"], n_a),
+                    categories=["young", "mid", "old"],
+                ),
+                "education": pd.Categorical(  # Y variable
+                    np.random.choice(["low", "mid", "high"], n_a),
+                    categories=["low", "mid", "high"],
+                ),
+                "weight": np.random.uniform(1.0, 2.0, n_a),
+            }
+        )
 
         # Survey B: has X variables and Z
         n_b = 100
-        survey_b = pd.DataFrame({
-            "sex": pd.Categorical(
-                np.random.choice(["M", "F"], n_b),
-                categories=["F", "M"]
-            ),
-            "age_group": pd.Categorical(
-                np.random.choice(["young", "mid", "old"], n_b),
-                categories=["young", "mid", "old"]
-            ),
-            "spending": pd.Categorical(  # Z variable
-                np.random.choice(["low", "med", "high"], n_b),
-                categories=["low", "med", "high"]
-            ),
-            "weight": np.random.uniform(0.8, 1.8, n_b)
-        })
+        survey_b = pd.DataFrame(
+            {
+                "sex": pd.Categorical(
+                    np.random.choice(["M", "F"], n_b), categories=["F", "M"]
+                ),
+                "age_group": pd.Categorical(
+                    np.random.choice(["young", "mid", "old"], n_b),
+                    categories=["young", "mid", "old"],
+                ),
+                "spending": pd.Categorical(  # Z variable
+                    np.random.choice(["low", "med", "high"], n_b),
+                    categories=["low", "med", "high"],
+                ),
+                "weight": np.random.uniform(0.8, 1.8, n_b),
+            }
+        )
 
         return survey_a, survey_b
 
@@ -369,25 +367,26 @@ class TestCombSamples:
 
         # Survey C: has both Y and Z (auxiliary data)
         n_c = 50
-        survey_c = pd.DataFrame({
-            "sex": pd.Categorical(
-                np.random.choice(["M", "F"], n_c),
-                categories=["F", "M"]
-            ),
-            "age_group": pd.Categorical(
-                np.random.choice(["young", "mid", "old"], n_c),
-                categories=["young", "mid", "old"]
-            ),
-            "education": pd.Categorical(
-                np.random.choice(["low", "mid", "high"], n_c),
-                categories=["low", "mid", "high"]
-            ),
-            "spending": pd.Categorical(
-                np.random.choice(["low", "med", "high"], n_c),
-                categories=["low", "med", "high"]
-            ),
-            "weight": np.random.uniform(0.9, 1.5, n_c)
-        })
+        survey_c = pd.DataFrame(
+            {
+                "sex": pd.Categorical(
+                    np.random.choice(["M", "F"], n_c), categories=["F", "M"]
+                ),
+                "age_group": pd.Categorical(
+                    np.random.choice(["young", "mid", "old"], n_c),
+                    categories=["young", "mid", "old"],
+                ),
+                "education": pd.Categorical(
+                    np.random.choice(["low", "mid", "high"], n_c),
+                    categories=["low", "mid", "high"],
+                ),
+                "spending": pd.Categorical(
+                    np.random.choice(["low", "med", "high"], n_c),
+                    categories=["low", "med", "high"],
+                ),
+                "weight": np.random.uniform(0.9, 1.5, n_c),
+            }
+        )
 
         return survey_a, survey_b, survey_c
 
@@ -404,7 +403,7 @@ class TestCombSamples:
             z_lab="spending",
             x_vars=["sex", "age_group"],
             weight_a="weight",
-            weight_b="weight"
+            weight_b="weight",
         )
 
         # Check output structure
@@ -433,7 +432,7 @@ class TestCombSamples:
             weight_a="weight",
             weight_b="weight",
             weight_c="weight",
-            estimation="incomplete"
+            estimation="incomplete",
         )
 
         # Check output structure
@@ -457,7 +456,7 @@ class TestCombSamples:
             x_vars=["sex", "age_group"],
             weight_a="weight",
             weight_b="weight",
-            micro=True
+            micro=True,
         )
 
         # With micro=True, should return probability matrices
@@ -474,9 +473,7 @@ class TestCombSamples:
 
         # Probabilities should sum to 1 for each row
         np.testing.assert_allclose(
-            result["z_a"].sum(axis=1),
-            np.ones(len(survey_a)),
-            rtol=1e-6
+            result["z_a"].sum(axis=1), np.ones(len(survey_a)), rtol=1e-6
         )
 
     @pytest.mark.skipif(not R_AVAILABLE, reason="R/rpy2 not available")
@@ -494,7 +491,7 @@ class TestCombSamples:
             z_lab="spending",
             x_vars=["sex", "age_group"],
             weight_a="weight",
-            weight_b="weight"
+            weight_b="weight",
         )
 
         # R implementation
@@ -505,21 +502,16 @@ class TestCombSamples:
             ro.r.assign("survey_a", survey_a_r)
             ro.r.assign("survey_b", survey_b_r)
 
-            ro.r('''
+            ro.r("""
             library(survey)
             svy_a <- svydesign(~1, weights=~weight, data=survey_a)
             svy_b <- svydesign(~1, weights=~weight, data=survey_b)
             result_r <- comb.samples(svy.A=svy_a, svy.B=svy_b,
                                     y.lab="education", z.lab="spending",
                                     form.x=~sex+age_group)
-            ''')
+            """)
 
             yz_cia_r = np.array(ro.r("result_r$yz.CIA"))
 
         # Compare CIA tables
-        np.testing.assert_allclose(
-            result_py["yz_cia"],
-            yz_cia_r,
-            rtol=0.01,
-            atol=0.01
-        )
+        np.testing.assert_allclose(result_py["yz_cia"], yz_cia_r, rtol=0.01, atol=0.01)

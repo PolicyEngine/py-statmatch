@@ -31,9 +31,7 @@ def _fact2dummy(data: pd.DataFrame, all_levels: bool = False) -> pd.DataFrame:
             data[col].dtype, pd.CategoricalDtype
         ):
             # Convert to dummies
-            dummies = pd.get_dummies(
-                data[col], prefix=col, drop_first=not all_levels
-            )
+            dummies = pd.get_dummies(data[col], prefix=col, drop_first=not all_levels)
             result_dfs.append(dummies)
             col_names.extend(dummies.columns.tolist())
         else:
@@ -386,12 +384,8 @@ def _find_admissible_rho(
     """Find admissible bounds for rho_yz in MS method."""
     if p_x == 1:
         # Single X variable case
-        c_xy = vc[pos_x[0], pos_y] / np.sqrt(
-            vc[pos_x[0], pos_x[0]] * vc[pos_y, pos_y]
-        )
-        c_xz = vc[pos_x[0], pos_z] / np.sqrt(
-            vc[pos_x[0], pos_x[0]] * vc[pos_z, pos_z]
-        )
+        c_xy = vc[pos_x[0], pos_y] / np.sqrt(vc[pos_x[0], pos_x[0]] * vc[pos_y, pos_y])
+        c_xz = vc[pos_x[0], pos_z] / np.sqrt(vc[pos_x[0], pos_x[0]] * vc[pos_z, pos_z])
         low_c = c_xy * c_xz - np.sqrt((1 - c_xy**2) * (1 - c_xz**2))
         up_c = c_xy * c_xz + np.sqrt((1 - c_xy**2) * (1 - c_xz**2))
         rho_yz_CI = c_xy * c_xz
@@ -562,8 +556,13 @@ def _micro_matching(
 
     # Create filled recipient dataset
     filled_rec = pd.concat(
-        [x_rec_df, data_rec[[y_rec for y_rec in data_rec.columns if y_rec not in x_rec_df.columns]]],
-        axis=1
+        [
+            x_rec_df,
+            data_rec[
+                [y_rec for y_rec in data_rec.columns if y_rec not in x_rec_df.columns]
+            ],
+        ],
+        axis=1,
     ).copy()
     filled_rec[z_don] = data_don.iloc[don_idx][z_don].values
 
@@ -701,9 +700,7 @@ def sel_mtc_by_unc(
                 {
                     "x_vars": str(selected),
                     "av_width": best_score,
-                    "penalty": _compute_penalty(
-                        tab_xy, tab_xz, selected, corr_d
-                    ),
+                    "penalty": _compute_penalty(tab_xy, tab_xz, selected, corr_d),
                 }
             )
         else:

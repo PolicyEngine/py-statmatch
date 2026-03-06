@@ -70,9 +70,7 @@ def nnd_hotdeck(
     # Validate inputs
     if not all(var in data_rec.columns for var in match_vars):
         missing = [var for var in match_vars if var not in data_rec.columns]
-        raise ValueError(
-            f"Match variables {missing} not found in recipient data"
-        )
+        raise ValueError(f"Match variables {missing} not found in recipient data")
 
     if not all(var in data_don.columns for var in match_vars):
         missing = [var for var in match_vars if var not in data_don.columns]
@@ -232,9 +230,9 @@ def _find_matches(
             don_data[np.isnan(don_data[:, i]), i] = col_means[i]
 
     # Apply weighted standardization if weights are not uniform
-    use_weighted_std = not np.allclose(
-        rec_weights, rec_weights[0]
-    ) or not np.allclose(don_weights, don_weights[0])
+    use_weighted_std = not np.allclose(rec_weights, rec_weights[0]) or not np.allclose(
+        don_weights, don_weights[0]
+    )
 
     if use_weighted_std:
         rec_data, don_data = _weighted_standardize(
@@ -315,12 +313,8 @@ def _weighted_standardize(
     # Compute weighted variance
     dev_rec = rec_data - weighted_mean
     dev_don = don_data - weighted_mean
-    weighted_sq_dev_rec = np.sum(
-        dev_rec**2 * rec_weights[:, np.newaxis], axis=0
-    )
-    weighted_sq_dev_don = np.sum(
-        dev_don**2 * don_weights[:, np.newaxis], axis=0
-    )
+    weighted_sq_dev_rec = np.sum(dev_rec**2 * rec_weights[:, np.newaxis], axis=0)
+    weighted_sq_dev_don = np.sum(dev_don**2 * don_weights[:, np.newaxis], axis=0)
     weighted_var = (weighted_sq_dev_rec + weighted_sq_dev_don) / total_weight
     weighted_std = np.sqrt(weighted_var)
 
@@ -401,9 +395,7 @@ def _constrained_matching(
             available_donors = donor_usage < k
 
             if not np.any(available_donors):
-                raise ValueError(
-                    "Not enough donor capacity for all recipients"
-                )
+                raise ValueError("Not enough donor capacity for all recipients")
 
             # Find nearest available donor
             available_dists = dist_matrix[rec_idx].copy()

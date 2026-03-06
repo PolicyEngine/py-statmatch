@@ -60,8 +60,7 @@ def estimate_propensity(
     valid_estimators = ["logistic", "gbm", "random_forest", "neural_net"]
     if estimator not in valid_estimators:
         raise ValueError(
-            f"Unknown estimator '{estimator}'. "
-            f"Valid options are: {valid_estimators}"
+            f"Unknown estimator '{estimator}'. Valid options are: {valid_estimators}"
         )
 
     # Combine data with labels
@@ -81,9 +80,7 @@ def estimate_propensity(
     # Fit and predict
     if cv is not None and cv > 1:
         # Cross-validated predictions
-        proba = cross_val_predict(
-            model, X_scaled, y, cv=cv, method="predict_proba"
-        )
+        proba = cross_val_predict(model, X_scaled, y, cv=cv, method="predict_proba")
         # Get probability of being donor (class 1)
         scores = proba[:, 1]
     else:
@@ -201,9 +198,7 @@ def propensity_hotdeck(
     # Validate inputs
     if not all(var in data_rec.columns for var in match_vars):
         missing = [var for var in match_vars if var not in data_rec.columns]
-        raise ValueError(
-            f"Match variables {missing} not found in recipient data"
-        )
+        raise ValueError(f"Match variables {missing} not found in recipient data")
 
     if not all(var in data_don.columns for var in match_vars):
         missing = [var for var in match_vars if var not in data_don.columns]
@@ -258,9 +253,7 @@ def propensity_hotdeck(
     if caliper is not None:
         matched_mask = ~np.isnan(donor_indices)
         donor_indices_int = np.full(n_rec, -1, dtype=int)
-        donor_indices_int[matched_mask] = donor_indices[matched_mask].astype(
-            int
-        )
+        donor_indices_int[matched_mask] = donor_indices[matched_mask].astype(int)
     else:
         donor_indices_int = donor_indices.astype(int)
 

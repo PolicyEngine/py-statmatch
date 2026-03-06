@@ -142,9 +142,7 @@ def _learn_target_embeddings(
 
             # Normalize to create embedding dimensions
             normalized_mean = (smoothed_mean - global_mean) / global_std
-            normalized_var = (
-                np.sqrt(variance) / global_std if global_std > 0 else 0.0
-            )
+            normalized_var = np.sqrt(variance) / global_std if global_std > 0 else 0.0
 
             # Create embedding vector
             # Use mean, variance, and random projections for higher dims
@@ -301,12 +299,8 @@ def embedding_dist(
     n_y = len(data_y)
 
     # Build feature matrices by replacing categoricals with embeddings
-    features_x = _build_feature_matrix(
-        data_x, embeddings, cat_vars, numeric_vars
-    )
-    features_y = _build_feature_matrix(
-        data_y, embeddings, cat_vars, numeric_vars
-    )
+    features_x = _build_feature_matrix(data_x, embeddings, cat_vars, numeric_vars)
+    features_y = _build_feature_matrix(data_y, embeddings, cat_vars, numeric_vars)
 
     # Compute Euclidean distance
     from scipy.spatial.distance import cdist

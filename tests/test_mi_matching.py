@@ -218,9 +218,7 @@ class TestMICreateFused:
             assert "z" in fused.columns
             assert len(fused) == len(recipient_data)
 
-    def test_fused_datasets_preserve_recipient_data(
-        self, sample_data_with_matches
-    ):
+    def test_fused_datasets_preserve_recipient_data(self, sample_data_with_matches):
         """Test that fused datasets preserve recipient data."""
         donor_data, recipient_data, mi_results = sample_data_with_matches
 
@@ -311,9 +309,7 @@ class TestCombineMIEstimates:
         result = combine_mi_estimates(estimates, variances)
 
         assert "std_error" in result
-        assert np.isclose(
-            result["std_error"], np.sqrt(result["total_variance"])
-        )
+        assert np.isclose(result["std_error"], np.sqrt(result["total_variance"]))
 
 
 class TestMISummary:
@@ -368,9 +364,7 @@ class TestMISummary:
         means = [df["y"].mean() for df in sample_fused_datasets]
         expected_mean = np.mean(means)
 
-        assert np.isclose(
-            result.loc["mean", "estimate"], expected_mean, rtol=0.01
-        )
+        assert np.isclose(result.loc["mean", "estimate"], expected_mean, rtol=0.01)
 
     def test_summary_with_groupby(self, sample_fused_datasets):
         """Test summary with groupby variable."""
@@ -386,12 +380,8 @@ class TestMISummary:
         result = mi_summary(sample_fused_datasets, var="y", conf_level=0.95)
 
         # CI should be symmetric around estimate
-        ci_width_lower = (
-            result.loc["mean", "estimate"] - result.loc["mean", "ci_lower"]
-        )
-        ci_width_upper = (
-            result.loc["mean", "ci_upper"] - result.loc["mean", "estimate"]
-        )
+        ci_width_lower = result.loc["mean", "estimate"] - result.loc["mean", "ci_lower"]
+        ci_width_upper = result.loc["mean", "ci_upper"] - result.loc["mean", "estimate"]
 
         assert np.isclose(ci_width_lower, ci_width_upper, rtol=0.01)
 

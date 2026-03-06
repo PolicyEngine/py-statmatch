@@ -78,14 +78,10 @@ def fact2dummy(
     elif isinstance(data, pd.DataFrame):
         return _dataframe_to_dummies(data, all_levels)
     else:
-        raise TypeError(
-            f"data must be a pandas Series or DataFrame, got {type(data)}"
-        )
+        raise TypeError(f"data must be a pandas Series or DataFrame, got {type(data)}")
 
 
-def _series_to_dummies(
-    series: pd.Series, all_levels: bool, lab: str
-) -> pd.DataFrame:
+def _series_to_dummies(series: pd.Series, all_levels: bool, lab: str) -> pd.DataFrame:
     """Convert a categorical Series to dummy variables."""
     # Ensure we have the original series, not a CategoricalAccessor
     original_series = series
@@ -151,12 +147,8 @@ def _dataframe_to_dummies(df: pd.DataFrame, all_levels: bool) -> pd.DataFrame:
         series = df[col]
 
         # Check if column is categorical or can be treated as such
-        is_categorical = (
-            series.dtype.name == "category"
-            or (
-                hasattr(series.dtype, "name")
-                and "ordered" in str(series.dtype)
-            )
+        is_categorical = series.dtype.name == "category" or (
+            hasattr(series.dtype, "name") and "ordered" in str(series.dtype)
         )
 
         if is_categorical:
@@ -174,9 +166,7 @@ def _dataframe_to_dummies(df: pd.DataFrame, all_levels: bool) -> pd.DataFrame:
             unique_vals = series.dropna().unique()
             if len(unique_vals) < len(series) / 2:
                 # Likely categorical, convert
-                cat_series = pd.Series(
-                    pd.Categorical(series), name=col
-                )
+                cat_series = pd.Series(pd.Categorical(series), name=col)
                 dummies = _series_to_dummies(cat_series, all_levels, col)
                 for dummy_col in dummies.columns:
                     result_data[dummy_col] = dummies[dummy_col].values
@@ -282,14 +272,12 @@ def harmonize_x(
     # Calculate target totals
     if x_tot is not None:
         # Use provided population totals
-        target_totals = np.array(
-            [x_tot.get(col, 0.0) for col in design_a.columns]
-        )
+        target_totals = np.array([x_tot.get(col, 0.0) for col in design_a.columns])
     else:
         # Estimate totals by combining both surveys
         # Use simple pooling of weighted estimates
-        total_a = (design_a.values.T @ w_a)
-        total_b = (design_b.values.T @ w_b)
+        total_a = design_a.values.T @ w_a
+        total_b = design_b.values.T @ w_b
         # Average the two estimates (simple approach)
         target_totals = (total_a + total_b) / 2
 
@@ -298,19 +286,11 @@ def harmonize_x(
         weights_a = _linear_calibration(design_a.values, w_a, target_totals)
         weights_b = _linear_calibration(design_b.values, w_b, target_totals)
     elif cal_method == "raking":
-        weights_a = _raking_calibration(
-            design_a.values, w_a, target_totals, max_iter
-        )
-        weights_b = _raking_calibration(
-            design_b.values, w_b, target_totals, max_iter
-        )
+        weights_a = _raking_calibration(design_a.values, w_a, target_totals, max_iter)
+        weights_b = _raking_calibration(design_b.values, w_b, target_totals, max_iter)
     elif cal_method == "poststratify":
-        weights_a = _poststratify(
-            svy_a, x_vars, w_a, target_totals, design_a.columns
-        )
-        weights_b = _poststratify(
-            svy_b, x_vars, w_b, target_totals, design_b.columns
-        )
+        weights_a = _poststratify(svy_a, x_vars, w_a, target_totals, design_a.columns)
+        weights_b = _poststratify(svy_b, x_vars, w_b, target_totals, design_b.columns)
     else:
         raise ValueError(
             f"Unknown calibration method: {cal_method}. "
@@ -351,9 +331,7 @@ def _create_design_matrix(
         return pd.concat(result_parts, axis=1)
 
 
-def _linear_calibration(
-    X: np.ndarray, w: np.ndarray, target: np.ndarray
-) -> np.ndarray:
+def _linear_calibration(X: np.ndarray, w: np.ndarray, target: np.ndarray) -> np.ndarray:
     """Perform linear calibration (GREG-like adjustment)."""
     # Current totals
     current = X.T @ w
@@ -597,9 +575,7 @@ def comb_samples(
     yz_cia = yz_cia / np.sum(yz_cia) if np.sum(yz_cia) > 0 else yz_cia
 
     # Create result DataFrame with proper labels
-    yz_cia_df = pd.DataFrame(
-        yz_cia, index=y_cats, columns=z_cats
-    )
+    yz_cia_df = pd.DataFrame(yz_cia, index=y_cats, columns=z_cats)
 
     result = {"yz_cia": yz_cia_df}
 
@@ -611,9 +587,7 @@ def comb_samples(
         w_c = svy_c[weight_c].values.astype(float)
 
         # Compute empirical P(Y,Z) from survey C
-        yz_est = _compute_joint_dist(
-            svy_c[y_lab], svy_c[z_lab], w_c, y_cats, z_cats
-        )
+        yz_est = _compute_joint_dist(svy_c[y_lab], svy_c[z_lab], w_c, y_cats, z_cats)
 
         if estimation == "incomplete":
             # Incomplete Two-Way Stratification (ITWS)

@@ -132,12 +132,8 @@ class TestOTHotdeck:
         don_data = donor_data[["x1", "x2", "x3"]].values
 
         for i, donor_idx in enumerate(result["noad.index"]):
-            expected_dist = np.sqrt(
-                np.sum((rec_data[i] - don_data[donor_idx]) ** 2)
-            )
-            np.testing.assert_allclose(
-                result["dist.rd"][i], expected_dist, rtol=1e-10
-            )
+            expected_dist = np.sqrt(np.sum((rec_data[i] - don_data[donor_idx]) ** 2))
+            np.testing.assert_allclose(result["dist.rd"][i], expected_dist, rtol=1e-10)
 
     def test_ot_matching_manhattan_distance(self, sample_data):
         """Test OT matching with Manhattan distance."""
@@ -156,9 +152,7 @@ class TestOTHotdeck:
 
         for i, donor_idx in enumerate(result["noad.index"]):
             expected_dist = np.sum(np.abs(rec_data[i] - don_data[donor_idx]))
-            np.testing.assert_allclose(
-                result["dist.rd"][i], expected_dist, rtol=1e-10
-            )
+            np.testing.assert_allclose(result["dist.rd"][i], expected_dist, rtol=1e-10)
 
     def test_emd_method_exact_solution(self, small_data):
         """Test that EMD method gives exact optimal transport solution."""
@@ -260,9 +254,7 @@ class TestOTHotdeck:
 
         # Compare with returned total cost
         # OT cost = sum of (transport_plan * cost_matrix)
-        np.testing.assert_allclose(
-            result["total_cost"], optimal_cost, rtol=1e-10
-        )
+        np.testing.assert_allclose(result["total_cost"], optimal_cost, rtol=1e-10)
 
     def test_transport_plan_marginals(self, sample_data):
         """Test that transport plan marginals are correct."""
