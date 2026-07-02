@@ -72,3 +72,8 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
+[tool.setuptools.packages.find]
+# The repo is flat-layout with several non-package top-level directories
+# (website/, r-statmatch-src/, scripts/); without an explicit include,
+# setuptools' automatic discovery refuses to build from a git dependency.
+include = ["statmatch*"]
