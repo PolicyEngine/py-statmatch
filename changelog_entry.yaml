@@ -1,0 +1,4 @@
+- bump: patch
+  changes:
+    fixed:
+    - Package discovery for git installs (explicit setuptools include of statmatch*)
